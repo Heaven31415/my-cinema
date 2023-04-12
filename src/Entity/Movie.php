@@ -6,6 +6,8 @@ use App\Repository\MovieRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Serializer\Annotation\Context;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: MovieRepository::class)]
@@ -58,6 +60,7 @@ class Movie
         return $this;
     }
 
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'H:i:s'])]
     public function getLength(): ?\DateTimeInterface
     {
         return $this->length;
@@ -70,6 +73,7 @@ class Movie
         return $this;
     }
 
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d'])]
     public function getReleaseDate(): ?\DateTimeInterface
     {
         return $this->release_date;
