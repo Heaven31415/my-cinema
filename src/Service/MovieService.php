@@ -7,7 +7,6 @@ use App\Exception\EntityNotFoundException;
 use App\Exception\InvalidDataException;
 use App\Repository\MovieRepository;
 use App\Validator\MovieValidator;
-use DateTime;
 use Exception;
 use Symfony\Component\Uid\Uuid;
 
@@ -51,11 +50,7 @@ class MovieService
         }
 
         $movie = new Movie();
-
-        $movie->setTitle($data['title'])
-            ->setDescription($data['description'])
-            ->setLength(new DateTime($data['length']))
-            ->setReleaseDate(new DateTime($data['release_date']));
+        $movie->update($data);
 
         $this->repository->save($movie, true);
 
@@ -76,11 +71,7 @@ class MovieService
         }
 
         $movie = $this->find($id);
-
-        $movie->setTitle($data['title'])
-            ->setDescription($data['description'])
-            ->setLength(new DateTime($data['length']))
-            ->setReleaseDate(new DateTime($data['release_date']));
+        $movie->update($data);
 
         $this->repository->save($movie, true);
     }

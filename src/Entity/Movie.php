@@ -3,8 +3,10 @@
 namespace App\Entity;
 
 use App\Repository\MovieRepository;
+use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -84,5 +86,16 @@ class Movie
         $this->release_date = $release_date;
 
         return $this;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function update(array $data): void
+    {
+        $this->setTitle($data['title'])
+            ->setDescription($data['description'])
+            ->setLength(new DateTime($data['length']))
+            ->setReleaseDate(new DateTime($data['release_date']));
     }
 }
