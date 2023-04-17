@@ -63,7 +63,8 @@ class MovieServiceTest extends WebTestCase
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
             'length' => '02:42:00',
-            'release_date' => '2009-12-25'
+            'release_date' => '2009-12-25',
+            'genre' => 'Science Fiction',
         ];
 
         $movie = $this->service->create($data);
@@ -79,7 +80,7 @@ class MovieServiceTest extends WebTestCase
     {
         $data = [
             'title' => 1,
-            'release_date' => '2009-12-25'
+            'release_date' => '2009-12-25',
         ];
 
         $this->expectException(InvalidDataException::class);
@@ -87,6 +88,21 @@ class MovieServiceTest extends WebTestCase
         $this->service->create($data);
 
         $this->assertCount(0, $this->repository->findAll());
+    }
+
+    public function testCreateThrowsEntityNotFoundExceptionIfGenreDoesntExist(): void
+    {
+        $data = [
+            'title' => 'Avatar',
+            'description' => 'Avatar is a 2009 science fiction film...',
+            'length' => '02:42:00',
+            'release_date' => '2009-12-25',
+            'genre' => '?',
+        ];
+
+        $this->expectException(EntityNotFoundException::class);
+
+        $this->service->create($data);
     }
 
     public function testUpdateUpdatesMovieIfDataIsValid(): void
@@ -97,7 +113,8 @@ class MovieServiceTest extends WebTestCase
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
             'length' => '02:42:00',
-            'release_date' => '2009-12-25'
+            'release_date' => '2009-12-25',
+            'genre' => 'Science Fiction',
         ];
 
         $this->service->update($id, $data);
@@ -108,16 +125,33 @@ class MovieServiceTest extends WebTestCase
         $this->assertEquals(new DateTime('2009-12-25'), $movie->getReleaseDate());
     }
 
+
     public function testUpdateThrowsInvalidDataExceptionIfDataIsInvalid(): void
     {
         $movie = $this->factory->create();
         $id = $movie->getId();
         $data = [
             'title' => 1,
-            'release_date' => '2009-12-25'
+            'release_date' => '2009-12-25',
         ];
 
         $this->expectException(InvalidDataException::class);
+
+        $this->service->update($id, $data);
+    }
+
+    public function testUpdateThrowsEntityNotFoundExceptionIfGenreDoesntExist(): void
+    {
+        $id = new Uuid('8a47fd24-34d3-4ed0-b69c-4d151bf277c6');
+        $data = [
+            'title' => 'Avatar',
+            'description' => 'Avatar is a 2009 science fiction film...',
+            'length' => '02:42:00',
+            'release_date' => '2009-12-25',
+            'genre' => '?',
+        ];
+
+        $this->expectException(EntityNotFoundException::class);
 
         $this->service->update($id, $data);
     }
@@ -129,7 +163,8 @@ class MovieServiceTest extends WebTestCase
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
             'length' => '02:42:00',
-            'release_date' => '2009-12-25'
+            'release_date' => '2009-12-25',
+            'genre' => 'Science Fiction',
         ];
 
         $this->expectException(EntityNotFoundException::class);

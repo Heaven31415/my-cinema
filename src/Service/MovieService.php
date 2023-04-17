@@ -5,15 +5,18 @@ namespace App\Service;
 use App\Entity\Movie;
 use App\Exception\EntityNotFoundException;
 use App\Exception\InvalidDataException;
+use App\Repository\GenreRepository;
 use App\Repository\MovieRepository;
 use App\Validator\MovieValidator;
+use DateTime;
 use Exception;
 use Symfony\Component\Uid\Uuid;
 
 class MovieService
 {
     public function __construct(
-        private readonly MovieRepository $repository,
+        private readonly GenreRepository $genreRepository,
+        private readonly MovieRepository $movieRepository,
         private readonly MovieValidator $validator
     ) {
     }
@@ -23,10 +26,10 @@ class MovieService
      */
     public function find(Uuid $id): Movie
     {
-        $movie = $this->repository->find($id);
+        $movie = $this->movieRepository->find($id);
 
         if (!$movie) {
-            throw new EntityNotFoundException('Movie', $id);
+            throw new EntityNotFoundException('Movie');
         }
 
         return $movie;
@@ -34,7 +37,7 @@ class MovieService
 
     public function findAll(): array
     {
-        return $this->repository->findAll();
+        return $this->movieRepository->findAll();
     }
 
     /**
@@ -50,9 +53,7 @@ class MovieService
         }
 
         $movie = new Movie();
-        $movie->update($data);
-
-        $this->repository->save($movie, true);
+        $this->updateAndSave($movie, $data);
 
         return $movie;
     }
@@ -71,9 +72,7 @@ class MovieService
         }
 
         $movie = $this->find($id);
-        $movie->update($data);
-
-        $this->repository->save($movie, true);
+        $this->updateAndSave($movie, $data);
     }
 
     /**
@@ -82,6 +81,27 @@ class MovieService
     public function delete(Uuid $id): void
     {
         $movie = $this->find($id);
-        $this->repository->remove($movie, true);
+        $this->movieRepository->remove($movie, true);
+    }
+
+    /**
+     * @throws EntityNotFoundException
+     * @throws Exception
+     */
+    private function updateAndSave(Movie $movie, array $data): void
+    {
+        $genre = $this->genreRepository->findOneBy(['name' => $data['genre']]);
+
+        if ($genre === null) {
+            throw new EntityNotFoundException('Genre');
+        }
+
+        $movie->setTitle($data['title'])
+            ->setDescription($data['description'])
+            ->setLength(new DateTime($data['length']))
+            ->setReleaseDate(new DateTime($data['release_date']))
+            ->setGenre($genre);
+
+        $this->movieRepository->save($movie, true);
     }
 }

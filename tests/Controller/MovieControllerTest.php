@@ -64,12 +64,14 @@ class MovieControllerTest extends WebTestCase
             'description' => 'Avatar is a 2009 science fiction film...',
             'length' => '02:42:00',
             'release_date' => '2009-12-25',
+            'genre' => 'Science Fiction',
         ];
 
         $this->client->request('POST', '/movies', [], [], [], json_encode($content));
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $this->assertCount(1, $this->repository->findAll());
+        // TODO: Also check attributes of the Movie
     }
 
     public function testCreateReturnsBadRequestIfRequestBodyIsInvalid(): void
@@ -85,6 +87,21 @@ class MovieControllerTest extends WebTestCase
         $this->assertCount(0, $this->repository->findAll());
     }
 
+    public function testCreateReturnsNotFoundIfGenreDoesntExist(): void
+    {
+        $content = [
+            'title' => 'Avatar',
+            'description' => 'Avatar is a 2009 science fiction film...',
+            'length' => '02:42:00',
+            'release_date' => '2009-12-25',
+            'genre' => '?',
+        ];
+
+        $this->client->request('POST', '/movies', [], [], [], json_encode($content));
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
     public function testUpdateReturnsOk(): void
     {
         $movie = $this->factory->create();
@@ -94,6 +111,7 @@ class MovieControllerTest extends WebTestCase
             'description' => 'Avatar is a 2009 science fiction film...',
             'length' => '02:42:00',
             'release_date' => '2009-12-25',
+            'genre' => 'Science Fiction',
         ];
 
         $this->client->request('PUT', "/movies/$id", [], [], [], json_encode($content));
@@ -115,6 +133,22 @@ class MovieControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
     }
 
+    public function testUpdateReturnsNotFoundIfGenreDoesntExist(): void
+    {
+        $id = new Uuid('8a47fd24-34d3-4ed0-b69c-4d151bf277c6');
+        $content = [
+            'title' => 'Avatar',
+            'description' => 'Avatar is a 2009 science fiction film...',
+            'length' => '02:42:00',
+            'release_date' => '2009-12-25',
+            'genre' => '?',
+        ];
+
+        $this->client->request('PUT', "/movies/$id", [], [], [], json_encode($content));
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
     public function testUpdateReturnsNotFoundIfMovieDoesntExist(): void
     {
         $id = new Uuid('8a47fd24-34d3-4ed0-b69c-4d151bf277c6');
@@ -123,6 +157,7 @@ class MovieControllerTest extends WebTestCase
             'description' => 'Avatar is a 2009 science fiction film...',
             'length' => '02:42:00',
             'release_date' => '2009-12-25',
+            'genre' => 'Science Fiction',
         ];
 
         $this->client->request('PUT', "/movies/$id", [], [], [], json_encode($content));

@@ -28,6 +28,10 @@ class MovieValidator
                 new Assert\NotBlank(),
                 new Assert\Date(),
             ],
+            'genre' => [
+                new Assert\NotBlank(),
+                new Assert\Type(['type' => 'string'])
+            ]
         ]);
     }
 

@@ -21,7 +21,9 @@ class MovieController extends AbstractController
     #[Route('/movies', name: 'index_movies', methods: 'GET')]
     public function index(): JsonResponse
     {
-        return $this->json($this->service->findAll(), Response::HTTP_OK);
+        return $this->json($this->service->findAll(), Response::HTTP_OK, [], [
+            'groups' => 'basic',
+        ]);
     }
 
     /**
@@ -30,7 +32,9 @@ class MovieController extends AbstractController
     #[Route('/movies/{id}', name: 'show_movie', methods: 'GET')]
     public function show(Uuid $id): JsonResponse
     {
-        return $this->json($this->service->find($id));
+        return $this->json($this->service->find($id), Response::HTTP_OK, [], [
+            'groups' => 'basic',
+        ]);
     }
 
     /**
@@ -42,7 +46,9 @@ class MovieController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $movie = $this->service->create($data);
 
-        return $this->json($movie, Response::HTTP_CREATED);
+        return $this->json($movie, Response::HTTP_CREATED, [], [
+            'groups' => 'basic',
+        ]);
     }
 
     /**
@@ -55,7 +61,11 @@ class MovieController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $this->service->update($id, $data);
 
-        return $this->json(['message' => 'Movie was successfully updated.'], Response::HTTP_OK);
+        $content = ['message' => 'Movie was successfully updated.'];
+
+        return $this->json($content, Response::HTTP_OK, [], [
+            'groups' => 'basic',
+        ]);
     }
 
     /**
@@ -66,6 +76,10 @@ class MovieController extends AbstractController
     {
         $this->service->delete($id);
 
-        return $this->json(['message' => 'Movie was successfully deleted.'], Response::HTTP_OK);
+        $content = ['message' => 'Movie was successfully deleted.'];
+
+        return $this->json($content, Response::HTTP_OK, [], [
+            'groups' => 'basic',
+        ]);
     }
 }
