@@ -15,8 +15,8 @@ use Symfony\Component\Uid\Uuid;
 class MovieServiceTest extends WebTestCase
 {
     protected MovieFactory $factory;
-    protected MovieRepository $repository;
-    protected MovieService $service;
+    protected MovieRepository $movieRepository;
+    protected MovieService $movieService;
 
     /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
     protected function setUp(): void
@@ -25,8 +25,8 @@ class MovieServiceTest extends WebTestCase
         $container = static::getContainer();
 
         $this->factory = $container->get(MovieFactory::class);
-        $this->repository = $container->get(MovieRepository::class);
-        $this->service = $container->get(MovieService::class);
+        $this->movieRepository = $container->get(MovieRepository::class);
+        $this->movieService = $container->get(MovieService::class);
     }
 
     public function testFindReturnsMovieIfItExists(): void
@@ -34,7 +34,7 @@ class MovieServiceTest extends WebTestCase
         $movie = $this->factory->create();
         $id = $movie->getId();
 
-        $foundMovie = $this->service->find($id);
+        $foundMovie = $this->movieService->find($id);
 
         $this->assertEquals($movie, $foundMovie);
     }
@@ -45,14 +45,14 @@ class MovieServiceTest extends WebTestCase
 
         $this->expectException(EntityNotFoundException::class);
 
-        $this->service->find($id);
+        $this->movieService->find($id);
     }
 
     public function testFindAllReturnsAllMovies(): void
     {
         $movies = [$this->factory->create(), $this->factory->create()];
 
-        $foundMovies = $this->service->findAll();
+        $foundMovies = $this->movieService->findAll();
 
         $this->assertEquals($movies, $foundMovies);
     }
@@ -67,13 +67,13 @@ class MovieServiceTest extends WebTestCase
             'genre' => 'Science Fiction',
         ];
 
-        $movie = $this->service->create($data);
+        $movie = $this->movieService->create($data);
 
         $this->assertEquals('Avatar', $movie->getTitle());
         $this->assertEquals('Avatar is a 2009 science fiction film...', $movie->getDescription());
         $this->assertEquals(new DateTime('02:42:00'), $movie->getLength());
         $this->assertEquals(new DateTime('2009-12-25'), $movie->getReleaseDate());
-        $this->assertCount(1, $this->repository->findAll());
+        $this->assertCount(1, $this->movieRepository->findAll());
     }
 
     public function testCreateThrowsInvalidDataExceptionIfDataIsInvalid(): void
@@ -85,9 +85,9 @@ class MovieServiceTest extends WebTestCase
 
         $this->expectException(InvalidDataException::class);
 
-        $this->service->create($data);
+        $this->movieService->create($data);
 
-        $this->assertCount(0, $this->repository->findAll());
+        $this->assertCount(0, $this->movieRepository->findAll());
     }
 
     public function testCreateThrowsEntityNotFoundExceptionIfGenreDoesntExist(): void
@@ -102,7 +102,7 @@ class MovieServiceTest extends WebTestCase
 
         $this->expectException(EntityNotFoundException::class);
 
-        $this->service->create($data);
+        $this->movieService->create($data);
     }
 
     public function testUpdateUpdatesMovieIfDataIsValid(): void
@@ -117,7 +117,7 @@ class MovieServiceTest extends WebTestCase
             'genre' => 'Science Fiction',
         ];
 
-        $this->service->update($id, $data);
+        $this->movieService->update($id, $data);
 
         $this->assertEquals('Avatar', $movie->getTitle());
         $this->assertEquals('Avatar is a 2009 science fiction film...', $movie->getDescription());
@@ -137,7 +137,7 @@ class MovieServiceTest extends WebTestCase
 
         $this->expectException(InvalidDataException::class);
 
-        $this->service->update($id, $data);
+        $this->movieService->update($id, $data);
     }
 
     public function testUpdateThrowsEntityNotFoundExceptionIfGenreDoesntExist(): void
@@ -153,7 +153,7 @@ class MovieServiceTest extends WebTestCase
 
         $this->expectException(EntityNotFoundException::class);
 
-        $this->service->update($id, $data);
+        $this->movieService->update($id, $data);
     }
 
     public function testUpdateThrowsEntityNotFoundExceptionIfMovieDoesntExist(): void
@@ -169,7 +169,7 @@ class MovieServiceTest extends WebTestCase
 
         $this->expectException(EntityNotFoundException::class);
 
-        $this->service->update($id, $data);
+        $this->movieService->update($id, $data);
     }
 
     public function testDeleteDeletesMovieIfItExists(): void
@@ -177,9 +177,9 @@ class MovieServiceTest extends WebTestCase
         $movie = $this->factory->create();
         $id = $movie->getId();
 
-        $this->service->delete($id);
+        $this->movieService->delete($id);
 
-        $this->assertCount(0, $this->repository->findAll());
+        $this->assertCount(0, $this->movieRepository->findAll());
     }
 
     public function testDeleteThrowsEntityNotFoundExceptionIfMovieDoesntExist(): void
@@ -188,6 +188,6 @@ class MovieServiceTest extends WebTestCase
 
         $this->expectException(EntityNotFoundException::class);
 
-        $this->service->delete($id);
+        $this->movieService->delete($id);
     }
 }

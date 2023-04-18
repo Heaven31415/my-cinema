@@ -35,6 +35,9 @@ class MovieService
         return $movie;
     }
 
+    /**
+     * @return Movie[]
+     */
     public function findAll(): array
     {
         return $this->movieRepository->findAll();

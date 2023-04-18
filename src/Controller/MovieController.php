@@ -14,14 +14,14 @@ use Symfony\Component\Uid\Uuid;
 
 class MovieController extends AbstractController
 {
-    public function __construct(private readonly MovieService $service)
+    public function __construct(private readonly MovieService $movieService)
     {
     }
 
     #[Route('/movies', name: 'index_movies', methods: 'GET')]
     public function index(): JsonResponse
     {
-        return $this->json($this->service->findAll(), Response::HTTP_OK, [], [
+        return $this->json($this->movieService->findAll(), Response::HTTP_OK, [], [
             'groups' => 'basic',
         ]);
     }
@@ -32,7 +32,7 @@ class MovieController extends AbstractController
     #[Route('/movies/{id}', name: 'show_movie', methods: 'GET')]
     public function show(Uuid $id): JsonResponse
     {
-        return $this->json($this->service->find($id), Response::HTTP_OK, [], [
+        return $this->json($this->movieService->find($id), Response::HTTP_OK, [], [
             'groups' => 'basic',
         ]);
     }
@@ -44,7 +44,7 @@ class MovieController extends AbstractController
     public function create(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $movie = $this->service->create($data);
+        $movie = $this->movieService->create($data);
 
         return $this->json($movie, Response::HTTP_CREATED, [], [
             'groups' => 'basic',
@@ -59,7 +59,7 @@ class MovieController extends AbstractController
     public function update(Uuid $id, Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $this->service->update($id, $data);
+        $this->movieService->update($id, $data);
 
         $content = ['message' => 'Movie was successfully updated.'];
 
@@ -74,7 +74,7 @@ class MovieController extends AbstractController
     #[Route('/movies/{id}', name: 'delete_movie', methods: 'DELETE')]
     public function delete(Uuid $id): JsonResponse
     {
-        $this->service->delete($id);
+        $this->movieService->delete($id);
 
         $content = ['message' => 'Movie was successfully deleted.'];
 

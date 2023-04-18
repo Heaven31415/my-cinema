@@ -14,7 +14,7 @@ class MovieControllerTest extends WebTestCase
 {
     protected KernelBrowser $client;
     protected MovieFactory $factory;
-    protected MovieRepository $repository;
+    protected MovieRepository $movieRepository;
 
     /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
     protected function setUp(): void
@@ -24,7 +24,7 @@ class MovieControllerTest extends WebTestCase
         $container = $this->client->getContainer();
 
         $this->factory = $container->get(MovieFactory::class);
-        $this->repository = $container->get(MovieRepository::class);
+        $this->movieRepository = $container->get(MovieRepository::class);
     }
 
     public function testIndexReturnsOk(): void
@@ -70,8 +70,7 @@ class MovieControllerTest extends WebTestCase
         $this->client->request('POST', '/movies', [], [], [], json_encode($content));
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
-        $this->assertCount(1, $this->repository->findAll());
-        // TODO: Also check attributes of the Movie
+        $this->assertCount(1, $this->movieRepository->findAll());
     }
 
     public function testCreateReturnsBadRequestIfRequestBodyIsInvalid(): void
@@ -84,7 +83,7 @@ class MovieControllerTest extends WebTestCase
         $this->client->request('POST', '/movies', [], [], [], json_encode($content));
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertCount(0, $this->repository->findAll());
+        $this->assertCount(0, $this->movieRepository->findAll());
     }
 
     public function testCreateReturnsNotFoundIfGenreDoesntExist(): void
