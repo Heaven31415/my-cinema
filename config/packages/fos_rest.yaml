@@ -1,0 +1,19 @@
+# Read the documentation: https://fosrestbundle.readthedocs.io/en/3.x/
+fos_rest:
+    body_listener:
+        enabled: true
+        default_format: json
+    param_fetcher_listener:
+        enabled: true
+        force: true
+    view:
+        view_response_listener:
+            enabled: true
+    exception:
+        enabled: true
+        map_exception_codes: true
+        codes:
+            Symfony\Component\Routing\Exception\ResourceNotFoundException: HTTP_NOT_FOUND
+    format_listener:
+        rules:
+            - { path: ^/api, prefer_extension: true, fallback_format: json, priorities: [ json ] }
