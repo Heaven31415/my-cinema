@@ -3,12 +3,11 @@
 
 namespace App\Tests\Service;
 
-use App\Exception\EntityNotFoundException;
-use App\Exception\InvalidDataException;
 use App\Factory\HallFactory;
 use App\Repository\HallRepository;
 use App\Service\HallService;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class HallServiceTest extends WebTestCase
 {
@@ -27,7 +26,7 @@ class HallServiceTest extends WebTestCase
         $this->hallService = $container->get(HallService::class);
     }
 
-    public function testFindReturnsHallIfItExists(): void
+    public function testFind_ReturnsHall_IfItExists(): void
     {
         $hall = $this->factory->create();
         $id = $hall->getId();
@@ -37,16 +36,16 @@ class HallServiceTest extends WebTestCase
         $this->assertEquals($hall, $foundHall);
     }
 
-    public function testFindThrowsEntityNotFoundExceptionIfHallDoesntExist(): void
+    public function testFind_ThrowsResourceNotFoundException_IfHallDoesntExist(): void
     {
         $id = 0;
 
-        $this->expectException(EntityNotFoundException::class);
+        $this->expectException(ResourceNotFoundException::class);
 
         $this->hallService->find($id);
     }
 
-    public function testFindAllReturnsAllHalls(): void
+    public function testFindAll_ReturnsAllHalls(): void
     {
         $halls = [$this->factory->create(), $this->factory->create()];
 
@@ -55,7 +54,7 @@ class HallServiceTest extends WebTestCase
         $this->assertEquals($halls, $foundHalls);
     }
 
-    public function testCreateCreatesHallIfDataIsValid(): void
+    public function testCreate_CreatesHall(): void
     {
         $data = [
             'name' => 'A1',
@@ -68,21 +67,7 @@ class HallServiceTest extends WebTestCase
         $this->assertEquals(1, $hall->getCapacity());
     }
 
-    public function testCreateThrowsInvalidDataExceptionIfDataIsInvalid(): void
-    {
-        $data = [
-            'name' => 'A1',
-            'capacity' => 0,
-        ];
-
-        $this->expectException(InvalidDataException::class);
-
-        $this->hallService->create($data);
-
-        $this->assertCount(0, $this->hallRepository->findAll());
-    }
-
-    public function testUpdateUpdatesHallIfDataIsValid(): void
+    public function testUpdate_UpdatesHall(): void
     {
         $hall = $this->factory->create();
         $id = $hall->getId();
@@ -97,21 +82,7 @@ class HallServiceTest extends WebTestCase
         $this->assertEquals(1, $hall->getCapacity());
     }
 
-    public function testUpdateThrowsInvalidDataExceptionIfDataIsInvalid(): void
-    {
-        $hall = $this->factory->create();
-        $id = $hall->getId();
-        $data = [
-            'name' => 'A1',
-            'capacity' => 0,
-        ];
-
-        $this->expectException(InvalidDataException::class);
-
-        $this->hallService->update($id, $data);
-    }
-
-    public function testUpdateThrowsEntityNotFoundExceptionIfHallDoesntExist(): void
+    public function testUpdate_ThrowsResourceNotFoundException_IfHallDoesntExist(): void
     {
         $id = 0;
         $data = [
@@ -119,12 +90,12 @@ class HallServiceTest extends WebTestCase
             'capacity' => 1,
         ];
 
-        $this->expectException(EntityNotFoundException::class);
+        $this->expectException(ResourceNotFoundException::class);
 
         $this->hallService->update($id, $data);
     }
 
-    public function testDeleteDeletesHallIfItExists(): void
+    public function testDelete_DeletesHall_IfItExists(): void
     {
         $hall = $this->factory->create();
         $id = $hall->getId();
@@ -134,11 +105,11 @@ class HallServiceTest extends WebTestCase
         $this->assertCount(0, $this->hallRepository->findAll());
     }
 
-    public function testDeleteThrowsEntityNotFoundExceptionIfHallDoesntExist(): void
+    public function testDelete_ThrowsResourceNotFoundException_IfHallDoesntExist(): void
     {
         $id = 0;
 
-        $this->expectException(EntityNotFoundException::class);
+        $this->expectException(ResourceNotFoundException::class);
 
         $this->hallService->delete($id);
     }

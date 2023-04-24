@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Api\V1;
 
 use App\Factory\HallFactory;
 use App\Repository\HallRepository;
@@ -25,118 +25,111 @@ class HallControllerTest extends WebTestCase
         $this->hallRepository = $container->get(HAllRepository::class);
     }
 
-    public function testIndexReturnsOk(): void
+    public function testIndex_ReturnsOk(): void
     {
         for ($i = 0; $i < 3; $i++) {
             $this->factory->create();
         }
 
-        $this->client->request('GET', '/halls');
+        $this->client->jsonRequest('GET', '/api/v1/halls');
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
-    public function testShowReturnsOk(): void
+    public function testShow_ReturnsOk(): void
     {
         $hall = $this->factory->create();
         $id = $hall->getId();
 
-        $this->client->request('GET', "/halls/$id");
+        $this->client->jsonRequest('GET', "api/v1/halls/$id");
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
-    public function testShowReturnsNotFoundIfHallDoesntExist(): void
+    public function testShow_ReturnsNotFound_IfHallDoesntExist(): void
     {
         $id = 0;
 
-        $this->client->request('GET', "/halls/$id");
+        $this->client->jsonRequest('GET', "api/v1/halls/$id");
 
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
-    public function testCreateReturnsCreated(): void
+    public function testCreate_ReturnsCreated(): void
     {
-        $content = [
+        $this->client->jsonRequest('POST', 'api/v1/halls', [
             'name' => 'A1',
             'capacity' => 1,
-        ];
-
-        $this->client->request('POST', '/halls', [], [], [], json_encode($content));
+        ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
         $this->assertCount(1, $this->hallRepository->findAll());
     }
 
-    public function testCreateReturnsBadRequestIfRequestBodyIsInvalid(): void
+    public function testCreate_ReturnsBadRequest_IfRequestBodyIsInvalid(): void
     {
-        $content = [
+        $this->client->jsonRequest('POST', 'api/v1/halls', [
             'name' => 'A1',
             'capacity' => 0,
-        ];
-
-        $this->client->request('POST', '/halls', [], [], [], json_encode($content));
+        ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $this->assertCount(0, $this->hallRepository->findAll());
     }
 
-    public function testUpdateReturnsOk(): void
+    public function testUpdate_ReturnsOk(): void
     {
         $hall = $this->factory->create();
         $id = $hall->getId();
-        $content = [
+
+        $this->client->jsonRequest('PUT', "api/v1/halls/$id", [
             'name' => 'A1',
-            'capacity' => 1
-        ];
+            'capacity' => 1,
+        ]);
 
-        $this->client->request('PUT', "/halls/$id", [], [], [], json_encode($content));
-
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
     }
 
-    public function testUpdateReturnsBadRequestIfRequestBodyIsInvalid(): void
+    public function testUpdate_ReturnsBadRequest_IfRequestBodyIsInvalid(): void
     {
         $hall = $this->factory->create();
         $id = $hall->getId();
-        $content = [
+
+        $this->client->jsonRequest('PUT', "api/v1/halls/$id", [
             'name' => 'A1',
             'capacity' => 0,
-        ];
-
-        $this->client->request('PUT', "/halls/$id", [], [], [], json_encode($content));
+        ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
     }
 
-    public function testUpdateReturnsNotFoundIfHallDoesntExist(): void
+    public function testUpdate_ReturnsNotFound_IfHallDoesntExist(): void
     {
         $id = 0;
-        $content = [
+
+        $this->client->jsonRequest('PUT', "api/v1/halls/$id", [
             'name' => 'A1',
             'capacity' => 1,
-        ];
-
-        $this->client->request('PUT', "/halls/$id", [], [], [], json_encode($content));
+        ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
-    public function testDeleteReturnsOk(): void
+    public function testDelete_ReturnsOk(): void
     {
         $hall = $this->factory->create();
         $id = $hall->getId();
 
-        $this->client->request('DELETE', "/halls/$id");
+        $this->client->jsonRequest('DELETE', "api/v1/halls/$id");
 
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
     }
 
-    public function testDeleteReturnsNotFoundIfHallDoesntExist(): void
+    public function testDelete_ReturnsNotFound_IfHallDoesntExist(): void
     {
         $id = 0;
 
-        $this->client->request('DELETE', "/halls/$id");
+        $this->client->jsonRequest('DELETE', "api/v1/halls/$id");
 
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
