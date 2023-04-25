@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace App\Tests\Controller\Api\V1;
 
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -15,9 +15,9 @@ class GenreControllerTest extends WebTestCase
         $this->client = static::createClient();
     }
 
-    public function testIndexReturnsOk(): void
+    public function testIndex_ReturnsOk(): void
     {
-        $this->client->request('GET', '/genres');
+        $this->client->jsonRequest('GET', '/api/v1/genres');
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
