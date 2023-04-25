@@ -17,7 +17,7 @@ class HallService
         $hall = $this->hallRepository->find($id);
 
         if (!$hall) {
-            throw new ResourceNotFoundException("Hall with id $id doesn't exist");
+            throw new ResourceNotFoundException('Hall with id '.$id.' does not exist');
         }
 
         return $hall;

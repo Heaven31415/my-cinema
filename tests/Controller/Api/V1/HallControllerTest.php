@@ -77,7 +77,7 @@ class HallControllerTest extends WebTestCase
         $this->assertCount(0, $this->hallRepository->findAll());
     }
 
-    public function testUpdate_ReturnsOk(): void
+    public function testUpdate_ReturnsNoContent(): void
     {
         $hall = $this->factory->create();
         $id = $hall->getId();
@@ -115,7 +115,7 @@ class HallControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
     }
 
-    public function testDelete_ReturnsOk(): void
+    public function testDelete_ReturnsNoContent(): void
     {
         $hall = $this->factory->create();
         $id = $hall->getId();
