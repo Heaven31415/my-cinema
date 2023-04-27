@@ -62,8 +62,8 @@ class MovieControllerTest extends WebTestCase
         $this->client->jsonRequest('POST', 'api/v1/movies', [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
-            'length' => '02:42:00',
-            'release_date' => '2009-12-25',
+            'duration' => '02:42:00',
+            'releaseDate' => '2009-12-25',
             'genre' => 'Science Fiction',
         ]);
 
@@ -75,7 +75,7 @@ class MovieControllerTest extends WebTestCase
     {
         $this->client->jsonRequest('POST', 'api/v1/movies', [
             'title' => 1,
-            'release_date' => '2009-12-25',
+            'releaseDate' => '2009-12-25',
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -87,8 +87,8 @@ class MovieControllerTest extends WebTestCase
         $this->client->jsonRequest('POST', 'api/v1/movies', [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
-            'length' => '02:42:00',
-            'release_date' => '2009-12-25',
+            'duration' => '02:42:00',
+            'releaseDate' => '2009-12-25',
             'genre' => '?',
         ]);
 
@@ -102,8 +102,8 @@ class MovieControllerTest extends WebTestCase
         $this->client->jsonRequest('PUT', 'api/v1/movies/'.$id, [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
-            'length' => '02:42:00',
-            'release_date' => '2009-12-25',
+            'duration' => '02:42:00',
+            'releaseDate' => '2009-12-25',
             'genre' => 'Science Fiction',
         ]);
 
@@ -116,7 +116,7 @@ class MovieControllerTest extends WebTestCase
         $id = $movie->getId();
         $this->client->jsonRequest('PUT', 'api/v1/movies/'.$id, [
             'title' => 1,
-            'release_date' => '2009-12-25',
+            'releaseDate' => '2009-12-25',
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
@@ -129,8 +129,8 @@ class MovieControllerTest extends WebTestCase
         $this->client->jsonRequest('PUT', 'api/v1/movies/'.$id, [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
-            'length' => '02:42:00',
-            'release_date' => '2009-12-25',
+            'duration' => '02:42:00',
+            'releaseDate' => '2009-12-25',
             'genre' => '?',
         ]);
 
@@ -143,8 +143,8 @@ class MovieControllerTest extends WebTestCase
         $this->client->jsonRequest('PUT', 'api/v1/movies/'.$id, [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
-            'length' => '02:42:00',
-            'release_date' => '2009-12-25',
+            'duration' => '02:42:00',
+            'releaseDate' => '2009-12-25',
             'genre' => 'Science Fiction',
         ]);
 

@@ -38,7 +38,7 @@ class Movie
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'H:i:s'])]
     #[Groups('basic')]
-    private ?DateTimeInterface $length = null;
+    private ?DateTimeInterface $duration = null;
 
     #[OA\Property(type: 'date', example: '2009-12-25')]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
@@ -80,14 +80,14 @@ class Movie
         return $this;
     }
 
-    public function getLength(): ?DateTimeInterface
+    public function getDuration(): ?DateTimeInterface
     {
-        return $this->length;
+        return $this->duration;
     }
 
-    public function setLength(DateTimeInterface $length): self
+    public function setDuration(DateTimeInterface $duration): self
     {
-        $this->length = $length;
+        $this->duration = $duration;
 
         return $this;
     }

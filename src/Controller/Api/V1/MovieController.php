@@ -90,7 +90,7 @@ class MovieController extends AbstractFOSRestController
         new Assert\Type(['type' => 'string']),
         new Assert\NotBlank(),
     ])]
-    #[RequestParam(name: 'length', requirements: [
+    #[RequestParam(name: 'duration', requirements: [
         new Assert\Time(),
         new Assert\NotBlank(),
     ])]
@@ -134,7 +134,7 @@ class MovieController extends AbstractFOSRestController
         new Assert\Type(['type' => 'string']),
         new Assert\NotBlank(),
     ])]
-    #[RequestParam(name: 'length', requirements: [
+    #[RequestParam(name: 'duration', requirements: [
         new Assert\Time(),
         new Assert\NotBlank(),
     ])]

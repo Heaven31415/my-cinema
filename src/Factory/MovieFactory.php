@@ -28,12 +28,13 @@ class MovieFactory
     {
         $movie = new Movie();
 
-        // TODO: Find a better way to get a random genre
+        $genres = $this->genreRepository->findAll();
+
         $movie->setTitle(ucfirst($this->faker->word()))
             ->setDescription($this->faker->text())
-            ->setLength(new DateTime($this->faker->time()))
+            ->setDuration(new DateTime($this->faker->time()))
             ->setReleaseDate(new DateTime($this->faker->date()))
-            ->setGenre($this->genreRepository->find($this->faker->numberBetween(1, 18)));
+            ->setGenre($genres[rand(0, count($genres) - 1)]);
 
         $this->movieRepository->save($movie, true);
 
