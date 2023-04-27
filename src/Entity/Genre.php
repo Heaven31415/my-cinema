@@ -6,17 +6,20 @@ use App\Repository\GenreRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use OpenApi\Attributes as OA;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: GenreRepository::class)]
 class Genre
 {
+    #[OA\Property(example: 1)]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups('basic')]
     private ?int $id = null;
 
+    #[OA\Property(minLength: 1, example: 'Science Fiction')]
     #[ORM\Column(length: 255)]
     #[Groups('basic')]
     private ?string $name = null;

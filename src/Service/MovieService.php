@@ -82,7 +82,7 @@ class MovieService
         $movie->setTitle($data['title'])
             ->setDescription($data['description'])
             ->setLength(new DateTime($data['length']))
-            ->setReleaseDate(new DateTime($data['release_date']))
+            ->setReleaseDate(new DateTime($data['releaseDate']))
             ->setGenre($genre);
 
         $this->movieRepository->save($movie, true);
