@@ -1,0 +1,10 @@
+1. Add README with:
+    - short project description
+    - setup, install, test and doc instructions
+2. Add proper project description on GitHub
+3. Find a way to change example values of request bodies for POST and PUT requests in API docs
+4. Deploy the app using Heroku: https://devcenter.heroku.com/articles/getting-started-with-php
+5. Add automatic code quality checker via GitHub Actions
+6. Add automatic tests runner via GitHub Actions: https://github.com/shivammathur/setup-php
+7. Find a way to automatically check and reformat all code inside PhpStorm
+8. Add support for authorization and authentication by using: https://github.com/lexik/LexikJWTAuthenticationBundle
