@@ -5,9 +5,11 @@ namespace App\Tests\Controller\Api\V1;
 
 use App\Factory\MovieFactory;
 use App\Repository\MovieRepository;
+use FOS\RestBundle\Exception\InvalidParameterException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Uid\Uuid;
 
 class MovieControllerTest extends WebTestCase
@@ -20,6 +22,7 @@ class MovieControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
+        $this->client->catchExceptions(false);
 
         $container = $this->client->getContainer();
 
@@ -52,6 +55,8 @@ class MovieControllerTest extends WebTestCase
     {
         $id = new Uuid('8a47fd24-34d3-4ed0-b69c-4d151bf277c6');
 
+        $this->expectException(ResourceNotFoundException::class);
+
         $this->client->jsonRequest('GET', 'api/v1/movies/'.$id);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
@@ -73,6 +78,8 @@ class MovieControllerTest extends WebTestCase
 
     public function testCreate_ReturnsBadRequest_IfRequestBodyIsInvalid(): void
     {
+        $this->expectException(InvalidParameterException::class);
+
         $this->client->jsonRequest('POST', 'api/v1/movies', [
             'title' => 1,
             'releaseDate' => '2009-12-25',
@@ -84,6 +91,8 @@ class MovieControllerTest extends WebTestCase
 
     public function testCreate_ReturnsNotFound_IfGenreDoesntExist(): void
     {
+        $this->expectException(ResourceNotFoundException::class);
+
         $this->client->jsonRequest('POST', 'api/v1/movies', [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
@@ -114,6 +123,9 @@ class MovieControllerTest extends WebTestCase
     {
         $movie = $this->factory->create();
         $id = $movie->getId();
+
+        $this->expectException(InvalidParameterException::class);
+
         $this->client->jsonRequest('PUT', 'api/v1/movies/'.$id, [
             'title' => 1,
             'releaseDate' => '2009-12-25',
@@ -126,6 +138,9 @@ class MovieControllerTest extends WebTestCase
     {
         $movie = $this->factory->create();
         $id = $movie->getId();
+
+        $this->expectException(ResourceNotFoundException::class);
+
         $this->client->jsonRequest('PUT', 'api/v1/movies/'.$id, [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
@@ -140,6 +155,9 @@ class MovieControllerTest extends WebTestCase
     public function testUpdate_ReturnsNotFound_IfMovieDoesntExist(): void
     {
         $id = new Uuid('8a47fd24-34d3-4ed0-b69c-4d151bf277c6');
+
+        $this->expectException(ResourceNotFoundException::class);
+
         $this->client->jsonRequest('PUT', 'api/v1/movies/'.$id, [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
@@ -164,6 +182,8 @@ class MovieControllerTest extends WebTestCase
     public function testDelete_ReturnsNotFound_IfMovieDoesntExist(): void
     {
         $id = new Uuid('8a47fd24-34d3-4ed0-b69c-4d151bf277c6');
+
+        $this->expectException(ResourceNotFoundException::class);
 
         $this->client->jsonRequest('DELETE', 'api/v1/movies/'.$id);
 

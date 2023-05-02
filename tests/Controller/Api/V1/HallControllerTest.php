@@ -4,9 +4,11 @@ namespace App\Tests\Controller\Api\V1;
 
 use App\Factory\HallFactory;
 use App\Repository\HallRepository;
+use FOS\RestBundle\Exception\InvalidParameterException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class HallControllerTest extends WebTestCase
 {
@@ -18,6 +20,7 @@ class HallControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
+        $this->client->catchExceptions(false);
 
         $container = $this->client->getContainer();
 
@@ -50,6 +53,8 @@ class HallControllerTest extends WebTestCase
     {
         $id = 0;
 
+        $this->expectException(ResourceNotFoundException::class);
+
         $this->client->jsonRequest('GET', "api/v1/halls/$id");
 
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
@@ -68,6 +73,8 @@ class HallControllerTest extends WebTestCase
 
     public function testCreate_ReturnsBadRequest_IfRequestBodyIsInvalid(): void
     {
+        $this->expectException(InvalidParameterException::class);
+
         $this->client->jsonRequest('POST', 'api/v1/halls', [
             'name' => 'A1',
             'capacity' => 0,
@@ -95,6 +102,8 @@ class HallControllerTest extends WebTestCase
         $hall = $this->factory->create();
         $id = $hall->getId();
 
+        $this->expectException(InvalidParameterException::class);
+
         $this->client->jsonRequest('PUT', "api/v1/halls/$id", [
             'name' => 'A1',
             'capacity' => 0,
@@ -106,6 +115,8 @@ class HallControllerTest extends WebTestCase
     public function testUpdate_ReturnsNotFound_IfHallDoesntExist(): void
     {
         $id = 0;
+
+        $this->expectException(ResourceNotFoundException::class);
 
         $this->client->jsonRequest('PUT', "api/v1/halls/$id", [
             'name' => 'A1',
@@ -128,6 +139,8 @@ class HallControllerTest extends WebTestCase
     public function testDelete_ReturnsNotFound_IfHallDoesntExist(): void
     {
         $id = 0;
+
+        $this->expectException(ResourceNotFoundException::class);
 
         $this->client->jsonRequest('DELETE', "api/v1/halls/$id");
 
