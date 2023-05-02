@@ -11,7 +11,7 @@ class HallFixture extends Fixture implements FixtureGroupInterface
 {
     public static function getGroups(): array
     {
-        return ['prod'];
+        return ['dev', 'prod'];
     }
     public function load(ObjectManager $manager): void
     {
