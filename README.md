@@ -1,6 +1,6 @@
 # My Cinema
 
-https://github.com/Heaven31415/my-cinema/actions/workflows/tests.yml/badge.svg
+![tests](https://github.com/Heaven31415/my-cinema/actions/workflows/tests.yml/badge.svg)
 
 `My Cinema` is an REST API created with PHP and Symfony for managing a cinema
 
