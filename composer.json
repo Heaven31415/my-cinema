@@ -1,4 +1,6 @@
 {
+    "name": "heaven31415/my-cinema",
+    "description": "API for managing a cinema",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",
