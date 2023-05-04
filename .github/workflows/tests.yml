@@ -1,0 +1,50 @@
+#file: noinspection SpellCheckingInspection
+name: Run all available tests
+on: [ push, pull_request ]
+jobs:
+    symfony:
+        name: Symfony 6.2 (PHP ${{ matrix.php-versions }})
+        runs-on: ubuntu-latest
+        env:
+            DATABASE_URL: postgres://user:password@127.0.0.1:5432/db?charset=UTF-8
+        services:
+            postgres:
+                image: postgres:latest
+                env:
+                    POSTGRES_USER: user
+                    POSTGRES_PASSWORD: password
+                    POSTGRES_PORT: 5432
+                    POSTGRES_DB: db
+                ports:
+                    - 5432:5432
+                options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 3
+        strategy:
+            fail-fast: false
+            matrix:
+                php-versions: [ '8.1.18', '8.2.5' ]
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v3
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php-versions }}
+                    tools: phpunit-bridge
+                    extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, pgsql
+                    coverage: xdebug
+
+            -   name: Install project dependencies
+                run: composer install --no-progress --optimize-autoloader
+
+            -   name: Prepare the database
+                run: |
+                    php bin/console --env=test doctrine:database:create
+                    php bin/console --env=test doctrine:migrations:migrate --no-interaction
+                    php bin/console --env=test doctrine:fixtures:load --no-interaction --group=test
+
+            -   name: Install PHPUnit
+                run: simple-phpunit install
+
+            -   name: Run all tests
+                run: simple-phpunit --coverage-text
