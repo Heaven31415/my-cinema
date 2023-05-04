@@ -1,6 +1,6 @@
 # My Cinema
 
-`My Cinema` is an REST API created with PHP and Symfony for managing a cinema.
+`My Cinema` is an REST API created with PHP and Symfony for managing a cinema
 
 ### Requirements
 
