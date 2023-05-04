@@ -1,4 +1,3 @@
-- Add proper project description on GitHub
 - Find a way to change example values of request bodies for POST and PUT requests in API docs
 - Deploy the app using Heroku: https://devcenter.heroku.com/articles/getting-started-with-php
 - Add automatic code quality checker via GitHub Actions
