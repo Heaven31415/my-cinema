@@ -1,5 +1,4 @@
 - Find a way to change example values of request bodies for POST and PUT requests in API docs
-- Deploy the app using Heroku: https://devcenter.heroku.com/articles/getting-started-with-php
 - Add automatic code quality checker via GitHub Actions
 - Find a way to automatically check and reformat all code inside PhpStorm
 - Add support for authorization and authentication by using: https://github.com/lexik/LexikJWTAuthenticationBundle
