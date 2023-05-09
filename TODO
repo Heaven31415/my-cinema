@@ -1,4 +1,10 @@
-- Find a way to change example values of request bodies for POST and PUT requests in API docs
+- Add set up with Docker
 - Add automatic code quality checker via GitHub Actions
+- Add authentication & authorization with: https://github.com/lexik/LexikJWTAuthenticationBundle
+- Add deployment instructions for Heroku to README
+- Add information about live demo to README
+- Change example values of request bodies for POST and PUT requests in API docs
 - Find a way to automatically check and reformat all code inside PhpStorm
-- Add support for authorization and authentication by using: https://github.com/lexik/LexikJWTAuthenticationBundle
+- Implement shows
+- Implement reservations
+- Improve error messages on production (explanations are too vague)
