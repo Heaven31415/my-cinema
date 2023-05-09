@@ -1,9 +1,8 @@
 - Add set up with Docker
 - Add automatic code quality checker via GitHub Actions
 - Add authentication & authorization with: https://github.com/lexik/LexikJWTAuthenticationBundle
-- Add deployment instructions for Heroku to README
-- Add information about live demo to README
 - Change example values of request bodies for POST and PUT requests in API docs
 - Implement shows
 - Implement reservations
 - Improve error messages on production (explanations are too vague)
+- Write a script to make set up of the project easier

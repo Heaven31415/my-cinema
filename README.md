@@ -44,8 +44,21 @@ Set up test database with:
 
 ### Run tests locally
 
-`$ php bin/phpunit`
+`$ bin/phpunit`
 
 ### View documentation locally
 
 Visit https://localhost:8000/api/doc to see the documentation
+
+### Live Demo
+
+Live demo of REST API is available for tests here: [demo](https://heaven31415-my-cinema.herokuapp.com)
+
+Documentation in OpenAPI format can be found here: [docs](https://heaven31415-my-cinema.herokuapp.com/api/doc)
+
+### Deployment on Heroku
+
+- Add a new commit to the master branch
+- `git push heroku master`
+- `heroku run php bin/console doctrine:migrations:migrate --no-interaction`
+
