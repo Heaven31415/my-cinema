@@ -4,7 +4,6 @@
 - Add deployment instructions for Heroku to README
 - Add information about live demo to README
 - Change example values of request bodies for POST and PUT requests in API docs
-- Find a way to automatically check and reformat all code inside PhpStorm
 - Implement shows
 - Implement reservations
 - Improve error messages on production (explanations are too vague)

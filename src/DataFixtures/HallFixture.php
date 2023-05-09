@@ -13,6 +13,7 @@ class HallFixture extends Fixture implements FixtureGroupInterface
     {
         return ['dev', 'prod'];
     }
+
     public function load(ObjectManager $manager): void
     {
         $hallsData = [

@@ -19,18 +19,21 @@ Change to its directory: `$ cd my-cinema`
 Install dependencies: `$ composer install`
 
 Create local .env files:
+
 - `$ cp .env .env.local`
 - `$ cp .env.test .env.test.local`
 
-Configure the value of `DATABASE_URL` environment variable in `.env.local` and `.env.test.local` 
+Configure the value of `DATABASE_URL` environment variable in `.env.local` and `.env.test.local`
 files (its value should be identical in both files)
 
 Set up main database with:
+
 - `$ php bin/console doctrine:database:create`
 - `$ php bin/console doctrine:migrations:migrate --no-interaction`
 - `$ php bin/console doctrine:fixtures:load --no-interaction --group=dev`
 
 Set up test database with:
+
 - `$ php bin/console --env=test doctrine:database:create`
 - `$ php bin/console --env=test doctrine:migrations:migrate --no-interaction`
 - `$ php bin/console --env=test doctrine:fixtures:load --no-interaction --group=test`
