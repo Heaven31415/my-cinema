@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\MovieRepository;
 use DateTimeInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use OpenApi\Attributes as OA;
@@ -50,6 +52,14 @@ class Movie
     #[ORM\JoinColumn(nullable: false)]
     #[Groups('basic')]
     private ?Genre $genre = null;
+
+    #[ORM\OneToMany(mappedBy: 'movie', targetEntity: Show::class)]
+    private Collection $shows;
+
+    public function __construct()
+    {
+        $this->shows = new ArrayCollection();
+    }
 
     public function getId(): ?Uuid
     {
@@ -112,6 +122,36 @@ class Movie
     public function setGenre(?Genre $genre): self
     {
         $this->genre = $genre;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Show>
+     */
+    public function getShows(): Collection
+    {
+        return $this->shows;
+    }
+
+    public function addShow(Show $show): self
+    {
+        if (!$this->shows->contains($show)) {
+            $this->shows->add($show);
+            $show->setMovie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShow(Show $show): self
+    {
+        if ($this->shows->removeElement($show)) {
+            // set the owning side to null (unless already changed)
+            if ($show->getMovie() === $this) {
+                $show->setMovie(null);
+            }
+        }
 
         return $this;
     }
