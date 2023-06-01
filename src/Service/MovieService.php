@@ -81,7 +81,7 @@ class MovieService
 
         $movie->setTitle($data['title'])
             ->setDescription($data['description'])
-            ->setDuration(new DateTime($data['duration']))
+            ->setDurationInMinutes($data['durationInMinutes'])
             ->setReleaseDate(new DateTime($data['releaseDate']))
             ->setGenre($genre);
 

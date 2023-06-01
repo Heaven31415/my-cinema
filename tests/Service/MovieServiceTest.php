@@ -61,7 +61,7 @@ class MovieServiceTest extends WebTestCase
         $data = [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
-            'duration' => '02:42:00',
+            'durationInMinutes' => 162,
             'releaseDate' => '2009-12-25',
             'genre' => 'Science Fiction',
         ];
@@ -70,7 +70,7 @@ class MovieServiceTest extends WebTestCase
 
         $this->assertEquals('Avatar', $movie->getTitle());
         $this->assertEquals('Avatar is a 2009 science fiction film...', $movie->getDescription());
-        $this->assertEquals(new DateTime('02:42:00'), $movie->getDuration());
+        $this->assertEquals(162, $movie->getDurationInMinutes());
         $this->assertEquals(new DateTime('2009-12-25'), $movie->getReleaseDate());
         $this->assertEquals('Science Fiction', $movie->getGenre()->getName());
         $this->assertCount(1, $this->movieRepository->findAll());
@@ -81,7 +81,7 @@ class MovieServiceTest extends WebTestCase
         $data = [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
-            'duration' => '02:42:00',
+            'durationInMinutes' => 162,
             'releaseDate' => '2009-12-25',
             'genre' => '?',
         ];
@@ -98,7 +98,7 @@ class MovieServiceTest extends WebTestCase
         $data = [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
-            'duration' => '02:42:00',
+            'durationInMinutes' => 162,
             'releaseDate' => '2009-12-25',
             'genre' => 'Science Fiction',
         ];
@@ -107,7 +107,7 @@ class MovieServiceTest extends WebTestCase
 
         $this->assertEquals('Avatar', $movie->getTitle());
         $this->assertEquals('Avatar is a 2009 science fiction film...', $movie->getDescription());
-        $this->assertEquals(new DateTime('02:42:00'), $movie->getDuration());
+        $this->assertEquals(162, $movie->getDurationInMinutes());
         $this->assertEquals(new DateTime('2009-12-25'), $movie->getReleaseDate());
         $this->assertEquals('Science Fiction', $movie->getGenre()->getName());
     }
@@ -120,7 +120,7 @@ class MovieServiceTest extends WebTestCase
         $data = [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
-            'duration' => '02:42:00',
+            'durationInMinutes' => 162,
             'releaseDate' => '2009-12-25',
             'genre' => '?',
         ];
@@ -136,7 +136,7 @@ class MovieServiceTest extends WebTestCase
         $data = [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
-            'duration' => '02:42:00',
+            'durationInMinutes' => 162,
             'releaseDate' => '2009-12-25',
             'genre' => 'Science Fiction',
         ];

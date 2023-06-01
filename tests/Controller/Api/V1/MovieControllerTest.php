@@ -67,7 +67,7 @@ class MovieControllerTest extends WebTestCase
         $this->client->jsonRequest('POST', 'api/v1/movies', [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
-            'duration' => '02:42:00',
+            'durationInMinutes' => 162,
             'releaseDate' => '2009-12-25',
             'genre' => 'Science Fiction',
         ]);
@@ -96,7 +96,7 @@ class MovieControllerTest extends WebTestCase
         $this->client->jsonRequest('POST', 'api/v1/movies', [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
-            'duration' => '02:42:00',
+            'durationInMinutes' => 162,
             'releaseDate' => '2009-12-25',
             'genre' => '?',
         ]);
@@ -111,7 +111,7 @@ class MovieControllerTest extends WebTestCase
         $this->client->jsonRequest('PUT', 'api/v1/movies/'.$id, [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
-            'duration' => '02:42:00',
+            'durationInMinutes' => 162,
             'releaseDate' => '2009-12-25',
             'genre' => 'Science Fiction',
         ]);
@@ -144,7 +144,7 @@ class MovieControllerTest extends WebTestCase
         $this->client->jsonRequest('PUT', 'api/v1/movies/'.$id, [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
-            'duration' => '02:42:00',
+            'durationInMinutes' => 162,
             'releaseDate' => '2009-12-25',
             'genre' => '?',
         ]);
@@ -161,7 +161,7 @@ class MovieControllerTest extends WebTestCase
         $this->client->jsonRequest('PUT', 'api/v1/movies/'.$id, [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
-            'duration' => '02:42:00',
+            'durationInMinutes' => 162,
             'releaseDate' => '2009-12-25',
             'genre' => 'Science Fiction',
         ]);

@@ -36,11 +36,10 @@ class Movie
     #[Groups('basic')]
     private ?string $description = null;
 
-    #[OA\Property(type: 'time', example: '02:42:00')]
-    #[ORM\Column(type: Types::TIME_MUTABLE)]
-    #[Context([DateTimeNormalizer::FORMAT_KEY => 'H:i:s'])]
+    #[OA\Property(minimum: 1, example: 162)]
+    #[ORM\Column]
     #[Groups('basic')]
-    private ?DateTimeInterface $duration = null;
+    private ?int $durationInMinutes = null;
 
     #[OA\Property(type: 'date', example: '2009-12-25')]
     #[ORM\Column(type: Types::DATE_MUTABLE)]
@@ -90,14 +89,14 @@ class Movie
         return $this;
     }
 
-    public function getDuration(): ?DateTimeInterface
+    public function getDurationInMinutes(): ?int
     {
-        return $this->duration;
+        return $this->durationInMinutes;
     }
 
-    public function setDuration(DateTimeInterface $duration): self
+    public function setDurationInMinutes(int $durationInMinutes): self
     {
-        $this->duration = $duration;
+        $this->durationInMinutes = $durationInMinutes;
 
         return $this;
     }
