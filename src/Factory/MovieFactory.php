@@ -24,17 +24,17 @@ class MovieFactory
     /**
      * @throws Exception
      */
-    public function create(): Movie
+    public function create(array $data = []): Movie
     {
         $movie = new Movie();
 
         $genres = $this->genreRepository->findAll();
 
-        $movie->setTitle(ucfirst($this->faker->word()))
-            ->setDescription($this->faker->text())
-            ->setDuration(new DateTime($this->faker->time()))
-            ->setReleaseDate(new DateTime($this->faker->date()))
-            ->setGenre($genres[rand(0, count($genres) - 1)]);
+        $movie->setTitle($data['title'] ?? ucfirst($this->faker->word()))
+            ->setDescription($data['description'] ?? $this->faker->text())
+            ->setDuration($data['duration'] ?? new DateTime($this->faker->time()))
+            ->setReleaseDate($data['releaseDate'] ?? new DateTime($this->faker->date()))
+            ->setGenre($data['genre'] ?? $genres[rand(0, count($genres) - 1)]);
 
         $this->movieRepository->save($movie, true);
 

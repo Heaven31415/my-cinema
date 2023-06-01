@@ -16,12 +16,12 @@ class HallFactory
         $this->faker = Factory::create();
     }
 
-    public function create(): Hall
+    public function create(array $data = []): Hall
     {
         $hall = new Hall();
 
-        $hall->setName($this->faker->word())
-            ->setCapacity($this->faker->randomElement([25, 50, 100, 200]));
+        $hall->setName($data['name'] ?? $this->faker->word())
+            ->setCapacity($data['capacity'] ?? $this->faker->randomElement([25, 50, 100, 200]));
 
         $this->hallRepository->save($hall, true);
 
