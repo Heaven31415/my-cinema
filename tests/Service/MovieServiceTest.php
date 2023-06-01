@@ -17,7 +17,6 @@ class MovieServiceTest extends WebTestCase
     protected MovieRepository $movieRepository;
     protected MovieService $movieService;
 
-    /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
     protected function setUp(): void
     {
         self::bootKernel();

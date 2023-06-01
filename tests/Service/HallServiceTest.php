@@ -15,7 +15,6 @@ class HallServiceTest extends WebTestCase
     protected HallRepository $hallRepository;
     protected HallService $hallService;
 
-    /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
     protected function setUp(): void
     {
         self::bootKernel();
