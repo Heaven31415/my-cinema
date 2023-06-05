@@ -26,3 +26,5 @@ services:
         public: true
     App\Factory\MovieFactory:
         public: true
+    App\Factory\ShowFactory:
+        public: true
