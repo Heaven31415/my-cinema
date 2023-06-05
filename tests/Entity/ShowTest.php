@@ -27,9 +27,9 @@ class ShowTest extends KernelTestCase
         $movie = $this->movieFactory->create(['durationInMinutes' => 60]);
 
         $show = $this->showFactory->create(
-            ['movie' => $movie, 'start' => new DateTime('2020-09-28 12:00:00')]
+            ['movie' => $movie, 'startTime' => new DateTime('2020-09-28 12:00:00')]
         );
 
-        $this->assertEquals(new DateTime('2020-09-28 13:00:00'), $show->getEnd());
+        $this->assertEquals(new DateTime('2020-09-28 13:00:00'), $show->getEndTime());
     }
 }

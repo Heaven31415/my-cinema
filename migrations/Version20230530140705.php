@@ -18,7 +18,7 @@ final class Version20230530140705 extends AbstractMigration
     {
         $this->addSql('CREATE SEQUENCE show_id_seq INCREMENT BY 1 MINVALUE 1 START 1');
         $this->addSql(
-            'CREATE TABLE show (id INT NOT NULL, movie_id UUID NOT NULL, hall_id INT NOT NULL, start TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))'
+            'CREATE TABLE show (id INT NOT NULL, movie_id UUID NOT NULL, hall_id INT NOT NULL, start_time TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))'
         );
         $this->addSql('CREATE INDEX IDX_320ED9018F93B6FC ON show (movie_id)');
         $this->addSql('CREATE INDEX IDX_320ED90152AFCFD6 ON show (hall_id)');

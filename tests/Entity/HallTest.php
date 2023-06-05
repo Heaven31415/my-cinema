@@ -31,15 +31,15 @@ class HallTest extends KernelTestCase
         $hall = $this->hallFactory->create();
 
         $showA = $this->showFactory->create(
-            ['movie' => $movie, 'hall' => $hall, 'start' => new DateTime('2020-09-28 18:30:00')]
+            ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 18:30:00')]
         );
 
         $showB = $this->showFactory->create(
-            ['movie' => $movie, 'hall' => $hall, 'start' => new DateTime('2020-09-28 20:00:00')]
+            ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 20:00:00')]
         );
 
         $showC = $this->showFactory->create(
-            ['movie' => $movie, 'hall' => $hall, 'start' => new DateTime('2020-09-28 21:30:00')]
+            ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 21:30:00')]
         );
 
         $from = new DateTime('2020-09-28 19:00:00');
@@ -60,11 +60,11 @@ class HallTest extends KernelTestCase
         $hall = $this->hallFactory->create();
 
         $this->showFactory->create(
-            ['movie' => $movie, 'hall' => $hall, 'start' => new DateTime('2020-09-28 17:00:00')]
+            ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 17:00:00')]
         );
 
         $this->showFactory->create(
-            ['movie' => $movie, 'hall' => $hall, 'start' => new DateTime('2020-09-28 23:00:00')]
+            ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 23:00:00')]
         );
 
         $from = new DateTime('2020-09-28 19:00:00');

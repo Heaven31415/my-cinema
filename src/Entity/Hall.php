@@ -86,8 +86,8 @@ class Hall
         DateTimeInterface $to
     ): Collection {
         return $this->shows->filter(p: function (Show $show) use ($from, $to) {
-            $start = $show->getStart();
-            $end = $show->getEnd();
+            $start = $show->getStartTime();
+            $end = $show->getEndTime();
 
             return ($from < $start && $start < $to) || ($from < $end && $end < $to);
         });

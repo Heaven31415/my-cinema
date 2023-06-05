@@ -33,7 +33,7 @@ class ShowFactory
         $movie->addShow($show);
         $hall->addShow($show);
 
-        $show->setStart($data['start'] ?? $this->faker->dateTime());
+        $show->setStartTime($data['startTime'] ?? $this->faker->dateTime());
 
         $this->showRepository->save($show, true);
 

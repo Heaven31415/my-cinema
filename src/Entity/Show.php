@@ -36,7 +36,7 @@ class Show
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Context([DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s'])]
     #[Groups('basic')]
-    private ?DateTimeInterface $start = null;
+    private ?DateTimeInterface $startTime = null;
 
     public function getId(): ?int
     {
@@ -67,24 +67,24 @@ class Show
         return $this;
     }
 
-    public function getStart(): ?DateTimeInterface
+    public function getStartTime(): ?DateTimeInterface
     {
-        return $this->start;
+        return $this->startTime;
     }
 
-    public function getEnd(): ?DateTimeInterface
+    public function setStartTime(DateTimeInterface $startTime): self
+    {
+        $this->startTime = $startTime;
+
+        return $this;
+    }
+
+    public function getEndTime(): ?DateTimeInterface
     {
         $durationInMinutes = $this->getMovie()->getDurationInMinutes();
 
-        $start = DateTimeImmutable::createFromInterface($this->getStart());
+        $start = DateTimeImmutable::createFromInterface($this->getStartTime());
 
         return $start->modify('+ '.$durationInMinutes.' minutes');
-    }
-
-    public function setStart(DateTimeInterface $start): self
-    {
-        $this->start = $start;
-
-        return $this;
     }
 }
