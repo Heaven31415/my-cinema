@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ShowRepository;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -69,6 +70,15 @@ class Show
     public function getStart(): ?DateTimeInterface
     {
         return $this->start;
+    }
+
+    public function getEnd(): ?DateTimeInterface
+    {
+        $durationInMinutes = $this->getMovie()->getDurationInMinutes();
+
+        $start = DateTimeImmutable::createFromInterface($this->getStart());
+
+        return $start->modify('+ '.$durationInMinutes.' minutes');
     }
 
     public function setStart(DateTimeInterface $start): self

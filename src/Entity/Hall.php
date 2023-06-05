@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\HallRepository;
-use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -87,10 +86,8 @@ class Hall
         DateTimeInterface $to
     ): Collection {
         return $this->shows->filter(p: function (Show $show) use ($from, $to) {
-            $durationInMinutes = $show->getMovie()->getDurationInMinutes();
-
-            $start = DateTimeImmutable::createFromInterface($show->getStart());
-            $end = $start->modify('+ '.$durationInMinutes.' minutes');
+            $start = $show->getStart();
+            $end = $show->getEnd();
 
             return ($from < $start && $start < $to) || ($from < $end && $end < $to);
         });
