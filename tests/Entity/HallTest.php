@@ -42,16 +42,25 @@ class HallTest extends KernelTestCase
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 21:30:00')]
         );
 
+        $showD = $this->showFactory->create(
+            [
+                'movie' => $this->movieFactory->create(['durationInMinutes' => 180]),
+                'hall' => $hall,
+                'startTime' => new DateTime('2020-09-28 19:00:00'),
+            ]
+        );
+
         $from = new DateTime('2020-09-28 19:00:00');
         $to = new DateTime('2020-09-28 22:00:00');
 
         $shows = $hall->getShowsForTimeInterval($from, $to);
 
-        $this->assertCount(3, $shows);
+        $this->assertCount(4, $shows);
 
         $this->assertContains($showA, $shows);
         $this->assertContains($showB, $shows);
         $this->assertContains($showC, $shows);
+        $this->assertContains($showD, $shows);
     }
 
     public function testGetShowsForTimeInterval_DoesntReturnShows_IfTheyAreNotInsideInterval(): void

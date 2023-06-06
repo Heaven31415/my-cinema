@@ -90,7 +90,7 @@ class Hall
             $start = $show->getStartTime();
             $end = $show->getEndTime();
 
-            return ($from < $start && $start < $to) || ($from < $end && $end < $to);
+            return ($from <= $start && $start <= $to) || ($from <= $end && $end <= $to);
         });
     }
 
