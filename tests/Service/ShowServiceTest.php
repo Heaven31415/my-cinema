@@ -137,6 +137,28 @@ class ShowServiceTest extends WebTestCase
         $this->assertEquals(new DateTime('2020-09-28 15:00:00'), $show->getEndTime());
     }
 
+    public function testUpdate_UpdatesShow_IfItMovesInsideItsTimeInterval(): void
+    {
+        $movie = $this->movieFactory->create(['durationInMinutes' => 60]);
+        $hall = $this->hallFactory->create();
+
+        $show = $this->showFactory->create(
+            ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 12:00:00')]
+        );
+
+        $id = $show->getId();
+        $data = [
+            'movie' => $movie->getId(),
+            'hall' => $hall->getId(),
+            'startTime' => '2020-09-28 12:30:00',
+        ];
+
+        $this->showService->update($id, $data);
+
+        $this->assertEquals(new DateTime('2020-09-28 12:30:00'), $show->getStartTime());
+        $this->assertEquals(new DateTime('2020-09-28 13:30:00'), $show->getEndTime());
+    }
+
     public function testUpdate_ThrowsBadRequestException_IfHallIsNotAvailable(): void
     {
         $movie = $this->movieFactory->create(['durationInMinutes' => 60]);

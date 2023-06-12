@@ -79,7 +79,7 @@ class ShowService
         $hall = $this->tryToFindHall($data);
         $startTime = new DateTime($data['startTime']);
 
-        if (!$hall->canPlayMovie($startTime, $movie)) {
+        if (!$hall->canPlayMovie($startTime, $movie, $show)) {
             throw new BadRequestHttpException(
                 'Hall "'.$hall->getName().'" is not available during that time'
             );

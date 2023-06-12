@@ -79,14 +79,20 @@ class Hall
     /**
      * @param DateTimeInterface $from
      * @param DateTimeInterface $to
+     * @param Show|null         $exclude
      *
      * @return Collection<int, Show>
      */
     public function getShowsForTimeInterval(
         DateTimeInterface $from,
-        DateTimeInterface $to
+        DateTimeInterface $to,
+        ?Show $exclude = null
     ): Collection {
-        return $this->shows->filter(p: function (Show $show) use ($from, $to) {
+        return $this->shows->filter(p: function (Show $show) use ($from, $to, $exclude) {
+            if ($exclude !== null && $show === $exclude) {
+                return false;
+            }
+
             $start = $show->getStartTime();
             $end = $show->getEndTime();
 
@@ -94,14 +100,24 @@ class Hall
         });
     }
 
-    public function canPlayMovie(DateTimeInterface $startTime, Movie $movie): bool
-    {
+    /**
+     * @param DateTimeInterface $startTime
+     * @param Movie             $movie
+     * @param Show|null         $exclude
+     *
+     * @return bool
+     */
+    public function canPlayMovie(
+        DateTimeInterface $startTime,
+        Movie $movie,
+        ?Show $exclude = null
+    ): bool {
         $durationInMinutes = $movie->getDurationInMinutes();
 
         $from = DateTimeImmutable::createFromInterface($startTime);
         $to = $from->modify('+ '.$durationInMinutes.' minutes');
 
-        return count($this->getShowsForTimeInterval($from, $to)) === 0;
+        return count($this->getShowsForTimeInterval($from, $to, $exclude)) === 0;
     }
 
     public function addShow(Show $show): self
