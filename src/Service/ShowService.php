@@ -10,7 +10,7 @@ use App\Repository\MovieRepository;
 use App\Repository\ShowRepository;
 use DateTime;
 use Exception;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class ShowService
@@ -51,7 +51,9 @@ class ShowService
         $startTime = new DateTime($data['startTime']);
 
         if (!$hall->canPlayMovie($startTime, $movie)) {
-            throw new BadRequestException('Hall '.$hall->getName().' is busy during that time');
+            throw new BadRequestHttpException(
+                'Hall "'.$hall->getName().'" is not available during that time'
+            );
         }
 
         $show = new Show();
@@ -78,7 +80,9 @@ class ShowService
         $startTime = new DateTime($data['startTime']);
 
         if (!$hall->canPlayMovie($startTime, $movie)) {
-            throw new BadRequestException('Hall '.$hall->getName().' is busy during that time');
+            throw new BadRequestHttpException(
+                'Hall "'.$hall->getName().'" is not available during that time'
+            );
         }
 
         $show->setStartTime($startTime);

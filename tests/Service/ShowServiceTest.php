@@ -10,7 +10,7 @@ use App\Repository\ShowRepository;
 use App\Service\ShowService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class ShowServiceTest extends WebTestCase
@@ -61,7 +61,7 @@ class ShowServiceTest extends WebTestCase
         $this->assertEquals($shows, $foundShows);
     }
 
-    public function testCreate_CreatesShow_IfHallIsNotBusy(): void
+    public function testCreate_CreatesShow_IfHallIsAvailable(): void
     {
         $movie = $this->movieFactory->create(['durationInMinutes' => 60]);
         $hall = $this->hallFactory->create();
@@ -84,7 +84,7 @@ class ShowServiceTest extends WebTestCase
         $this->assertEquals(new DateTime('2020-09-28 13:00:00'), $show->getEndTime());
     }
 
-    public function testCreate_ThrowsBadRequestException_IfHallIsBusy(): void
+    public function testCreate_ThrowsBadRequestException_IfHallIsNotAvailable(): void
     {
         $movie = $this->movieFactory->create(['durationInMinutes' => 60]);
         $hall = $this->hallFactory->create();
@@ -99,14 +99,12 @@ class ShowServiceTest extends WebTestCase
             'startTime' => '2020-09-28 12:30:00',
         ];
 
-        $this->expectException(BadRequestException::class);
+        $this->expectException(BadRequestHttpException::class);
 
         $this->showService->create($data);
-
-        $this->assertCount(0, $this->showRepository->findAll());
     }
 
-    public function testUpdate_UpdatesShow_IfHallIsNotBusy(): void
+    public function testUpdate_UpdatesShow_IfHallIsAvailable(): void
     {
         $movieA = $this->movieFactory->create(['durationInMinutes' => 60]);
         $movieB = $this->movieFactory->create(['durationInMinutes' => 120]);
@@ -128,18 +126,18 @@ class ShowServiceTest extends WebTestCase
         $this->showService->update($id, $data);
 
         $this->assertCount(0, $movieA->getShows());
-        $this->assertEquals($movieB, $show->getMovie());
         $this->assertCount(1, $movieB->getShows());
+        $this->assertEquals($movieB, $show->getMovie());
 
         $this->assertCount(0, $hallA->getShows());
-        $this->assertEquals($hallB, $show->getHall());
         $this->assertCount(1, $hallB->getShows());
+        $this->assertEquals($hallB, $show->getHall());
 
         $this->assertEquals(new DateTime('2020-09-28 13:00:00'), $show->getStartTime());
         $this->assertEquals(new DateTime('2020-09-28 15:00:00'), $show->getEndTime());
     }
 
-    public function testUpdate_ThrowsBadRequestException_IfHallIsBusy(): void
+    public function testUpdate_ThrowsBadRequestException_IfHallIsNotAvailable(): void
     {
         $movie = $this->movieFactory->create(['durationInMinutes' => 60]);
         $hall = $this->hallFactory->create();
@@ -159,14 +157,14 @@ class ShowServiceTest extends WebTestCase
             'startTime' => '2020-09-28 12:00:00',
         ];
 
-        $this->expectException(BadRequestException::class);
+        $this->expectException(BadRequestHttpException::class);
 
         $this->showService->update($id, $data);
     }
 
     public function testUpdate_ThrowsResourceNotFoundException_IfShowDoesntExist(): void
     {
-        $movie = $this->movieFactory->create(['durationInMinutes' => 60]);
+        $movie = $this->movieFactory->create();
         $hall = $this->hallFactory->create();
 
         $id = 0;
