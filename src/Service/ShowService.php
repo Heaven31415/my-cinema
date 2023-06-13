@@ -38,7 +38,7 @@ class ShowService
      */
     public function findAll(): array
     {
-        return $this->showRepository->findAll();
+        return $this->showRepository->findBy([], ['id' => 'ASC']);
     }
 
     /**
