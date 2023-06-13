@@ -6,3 +6,5 @@
 - Improve error messages on production (explanations are too vague)
 - Write a script to make set up of the project easier
 - Fix interactions between Movie and Genre
+- Sort entities (Genre, Hall and Movie) by id when returning all of them
+- Add data fixtures for Movies
