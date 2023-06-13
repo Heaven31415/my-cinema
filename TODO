@@ -9,3 +9,4 @@
 - Sort entities (Genre, Hall and Movie) by id when returning all of them
 - Add data fixtures for Movies
 - Improve and/or fix unit and integration tests for Genre, Hall and Movie
+- Add a section to the README with project statistics (number of tests, endpoints, implemented features and so on)
