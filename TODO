@@ -8,3 +8,4 @@
 - Fix interactions between Movie and Genre
 - Sort entities (Genre, Hall and Movie) by id when returning all of them
 - Add data fixtures for Movies
+- Improve and/or fix unit and integration tests for Genre, Hall and Movie
