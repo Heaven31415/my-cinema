@@ -4,12 +4,12 @@ on: [ push, pull_request ]
 jobs:
     symfony:
         name: Symfony 6.2 (PHP ${{ matrix.php-versions }})
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-22.04
         env:
             DATABASE_URL: postgres://user:password@127.0.0.1:5432/db?charset=UTF-8
         services:
             postgres:
-                image: postgres:latest
+                image: postgres:15.0-alpine3.16
                 env:
                     POSTGRES_USER: user
                     POSTGRES_PASSWORD: password
