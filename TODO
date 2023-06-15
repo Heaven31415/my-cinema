@@ -1,12 +1,12 @@
+# TODO
+
 - Add set up with Docker
 - Add automatic code quality checker via GitHub Actions
-- Add authentication & authorization with: https://github.com/lexik/LexikJWTAuthenticationBundle
+- Add authentication & authorization with: [Lexik JWT](https://github.com/lexik/LexikJWTAuthenticationBundle)
 - Change example values of request bodies for POST and PUT requests in API docs
 - Implement reservations
 - Improve error messages on production (explanations are too vague)
-- Write a script to make set up of the project easier
 - Fix interactions between Movie and Genre
 - Sort entities (Genre, Hall and Movie) by id when returning all of them
 - Add data fixtures for Movies
 - Improve and/or fix unit and integration tests for Genre, Hall and Movie
-- Add a section to the README with project statistics (number of tests, endpoints, implemented features and so on)
