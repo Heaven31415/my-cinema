@@ -1,0 +1,17 @@
+#!/bin/bash
+
+: '
+This script recreates both databases from scratch
+'
+
+# Recreate main database
+php bin/console doctrine:database:drop --force
+php bin/console doctrine:database:create
+php bin/console doctrine:migrations:migrate --no-interaction
+php bin/console doctrine:fixtures:load --no-interaction --group=dev
+
+# Recreate test database
+php bin/console --env=test doctrine:database:drop --force
+php bin/console --env=test doctrine:database:create
+php bin/console --env=test doctrine:migrations:migrate --no-interaction
+php bin/console --env=test doctrine:fixtures:load --no-interaction --group=test
