@@ -22,8 +22,6 @@ OpenAPI documentation can be found [here](https://heaven31415-my-cinema.herokuap
 
 ## Local setup and development
 
----
-
 ### Requirements
 
 - [PHP 8.1.20 or 8.2.7 (CI is run against both versions)](https://www.php.net/)
@@ -57,8 +55,6 @@ files (its value should be identical in both files) so you can connect to your P
 ### View API docs
 
 Start development server, open your browser and visit [this link](https://localhost:8000/api/doc) to see the docs
-
----
 
 ## Heroku deployment
 
