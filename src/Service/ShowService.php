@@ -2,22 +2,19 @@
 
 namespace App\Service;
 
-use App\Entity\Hall;
-use App\Entity\Movie;
 use App\Entity\Show;
-use App\Repository\HallRepository;
-use App\Repository\MovieRepository;
 use App\Repository\ShowRepository;
 use DateTime;
 use Exception;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Uid\Uuid;
 
 class ShowService
 {
     public function __construct(
-        private readonly MovieRepository $movieRepository,
-        private readonly HallRepository $hallRepository,
+        private readonly MovieService $movieService,
+        private readonly HallService $hallService,
         private readonly ShowRepository $showRepository
     ) {
     }
@@ -46,8 +43,9 @@ class ShowService
      */
     public function create(array $data): Show
     {
-        $movie = $this->tryToFindMovie($data);
-        $hall = $this->tryToFindHall($data);
+        $movie = $this->movieService->find(Uuid::fromString($data['movie']));
+        $hall = $this->hallService->find($data['hall']);
+
         $startTime = new DateTime($data['startTime']);
 
         if (!$hall->canPlayMovie($startTime, $movie)) {
@@ -75,8 +73,8 @@ class ShowService
     {
         $show = $this->find($id);
 
-        $movie = $this->tryToFindMovie($data);
-        $hall = $this->tryToFindHall($data);
+        $movie = $this->movieService->find(Uuid::fromString($data['movie']));
+        $hall = $this->hallService->find($data['hall']);
         $startTime = new DateTime($data['startTime']);
 
         if (!$hall->canPlayMovie($startTime, $movie, $show)) {
@@ -105,31 +103,5 @@ class ShowService
         $show = $this->find($id);
 
         $this->showRepository->remove($show, true);
-    }
-
-    private function tryToFindMovie(array $data): Movie
-    {
-        $movie = $this->movieRepository->find($data['movie']);
-
-        if ($movie === null) {
-            throw new ResourceNotFoundException(
-                'Movie with id '.$data['movie'].' does not exist'
-            );
-        }
-
-        return $movie;
-    }
-
-    private function tryToFindHall(array $data): Hall
-    {
-        $hall = $this->hallRepository->find($data['hall']);
-
-        if ($hall === null) {
-            throw new ResourceNotFoundException(
-                'Hall with id '.$data['hall'].' does not exist'
-            );
-        }
-
-        return $hall;
     }
 }
