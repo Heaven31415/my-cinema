@@ -32,7 +32,9 @@ class MovieFactory
 
         $movie->setTitle($data['title'] ?? ucfirst($this->faker->word()))
             ->setDescription($data['description'] ?? $this->faker->text())
-            ->setDurationInMinutes($data['durationInMinutes'] ?? $this->faker->numberBetween(60, 180))
+            ->setDurationInMinutes(
+                $data['durationInMinutes'] ?? $this->faker->numberBetween(60, 180)
+            )
             ->setReleaseDate($data['releaseDate'] ?? new DateTime($this->faker->date()))
             ->setGenre($data['genre'] ?? $genres[rand(0, count($genres) - 1)]);
 
