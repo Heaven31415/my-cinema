@@ -1,6 +1,6 @@
 # TODO
 
-- Add set up with Docker
+- Add setup with Docker
 - Add automatic code quality checker via GitHub Actions
 - Add authentication & authorization with: [Lexik JWT](https://github.com/lexik/LexikJWTAuthenticationBundle)
 - Change example values of request bodies for POST and PUT requests in API docs
@@ -8,5 +8,6 @@
 - Improve error messages on production (explanations are too vague)
 - Fix interactions between Movie and Genre
 - Sort entities (Genre, Hall and Movie) by id when returning all of them
-- Add data fixtures for Movies
+- Add data fixtures for Movies and Shows
 - Improve and/or fix unit and integration tests for Genre, Hall and Movie
+- Implement Show sorting by title, genre and date
