@@ -64,16 +64,16 @@ class MovieService
     {
         $movie = $this->find($id);
 
-        $genre = $this->genreService->findByName($data['genre']);
+        $newGenre = $this->genreService->findByName($data['genre']);
 
         $movie->setTitle($data['title'])
             ->setDescription($data['description'])
             ->setDurationInMinutes($data['durationInMinutes'])
             ->setReleaseDate(new DateTime($data['releaseDate']));
 
-        if ($movie->getGenre() !== $genre) {
+        if ($movie->getGenre() !== $newGenre) {
             $movie->getGenre()->removeMovie($movie);
-            $genre->addMovie($movie);
+            $newGenre->addMovie($movie);
         }
 
         $this->movieRepository->save($movie, true);
