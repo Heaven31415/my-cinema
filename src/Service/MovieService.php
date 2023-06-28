@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Entity\Movie;
-use App\Repository\GenreRepository;
 use App\Repository\MovieRepository;
 use DateTime;
 use Exception;
@@ -13,7 +12,7 @@ use Symfony\Component\Uid\Uuid;
 class MovieService
 {
     public function __construct(
-        private readonly GenreRepository $genreRepository,
+        private readonly GenreService $genreService,
         private readonly MovieRepository $movieRepository
     ) {
     }
@@ -34,7 +33,7 @@ class MovieService
      */
     public function findAll(): array
     {
-        return $this->movieRepository->findAll();
+        return $this->movieRepository->findBy([], ['id' => 'ASC']);
     }
 
     /**
@@ -44,7 +43,16 @@ class MovieService
     {
         $movie = new Movie();
 
-        $this->updateAndSave($movie, $data);
+        $genre = $this->genreService->findByName($data['genre']);
+
+        $movie->setTitle($data['title'])
+            ->setDescription($data['description'])
+            ->setDurationInMinutes($data['durationInMinutes'])
+            ->setReleaseDate(new DateTime($data['releaseDate']));
+
+        $genre->addMovie($movie);
+
+        $this->movieRepository->save($movie, true);
 
         return $movie;
     }
@@ -56,7 +64,19 @@ class MovieService
     {
         $movie = $this->find($id);
 
-        $this->updateAndSave($movie, $data);
+        $genre = $this->genreService->findByName($data['genre']);
+
+        $movie->setTitle($data['title'])
+            ->setDescription($data['description'])
+            ->setDurationInMinutes($data['durationInMinutes'])
+            ->setReleaseDate(new DateTime($data['releaseDate']));
+
+        if ($movie->getGenre() !== $genre) {
+            $movie->getGenre()->removeMovie($movie);
+            $genre->addMovie($movie);
+        }
+
+        $this->movieRepository->save($movie, true);
     }
 
     public function delete(Uuid $id): void
@@ -64,27 +84,5 @@ class MovieService
         $movie = $this->find($id);
 
         $this->movieRepository->remove($movie, true);
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function updateAndSave(Movie $movie, array $data): void
-    {
-        $genre = $this->genreRepository->findOneBy(['name' => $data['genre']]);
-
-        if ($genre === null) {
-            throw new ResourceNotFoundException(
-                'Genre with name '.$data['genre'].' does not exist'
-            );
-        }
-
-        $movie->setTitle($data['title'])
-            ->setDescription($data['description'])
-            ->setDurationInMinutes($data['durationInMinutes'])
-            ->setReleaseDate(new DateTime($data['releaseDate']))
-            ->setGenre($genre);
-
-        $this->movieRepository->save($movie, true);
     }
 }
