@@ -31,7 +31,7 @@ class MovieControllerTest extends WebTestCase
         $this->movieRepository = $container->get(MovieRepository::class);
     }
 
-    public function testIndex_ReturnsAllMovies(): void // done!
+    public function testIndex_ReturnsAllMovies(): void
     {
         $movies = $this->movieFactory->createMany(2);
 
@@ -64,7 +64,7 @@ class MovieControllerTest extends WebTestCase
         $this->assertEquals($movie->getGenre()->getId(), $response[1]['genre']['id']);
     }
 
-    public function testShow_ReturnsMovie(): void // done!
+    public function testShow_ReturnsMovie(): void
     {
         $movie = $this->movieFactory->createOne();
 
@@ -84,7 +84,7 @@ class MovieControllerTest extends WebTestCase
         $this->assertEquals($movie->getGenre()->getId(), $response['genre']['id']);
     }
 
-    public function testShow_ThrowsResourceNotFoundException_IfMovieDoesntExist(): void // done!
+    public function testShow_ThrowsResourceNotFoundException_IfMovieDoesntExist(): void
     {
         $this->expectException(ResourceNotFoundException::class);
 
@@ -94,7 +94,7 @@ class MovieControllerTest extends WebTestCase
         );
     }
 
-    public function testCreate_CreatesMovie(): void // done!
+    public function testCreate_CreatesMovie(): void
     {
         $title = 'Avatar';
         $description = 'Avatar is a 2009 science fiction film...';
@@ -124,7 +124,7 @@ class MovieControllerTest extends WebTestCase
     }
 
     public function testCreate_ThrowsInvalidParameterException_IfRequestBodyIsMissingValue(): void
-    { // done!
+    {
         $this->expectException(InvalidParameterException::class);
 
         $this->client->jsonRequest('POST', 'api/v1/movies', [
@@ -136,7 +136,7 @@ class MovieControllerTest extends WebTestCase
     }
 
     public function testCreate_ThrowsInvalidParameterException_IfRequestBodyHasInvalidValue(): void
-    { // done!
+    {
         $this->expectException(InvalidParameterException::class);
 
         $this->client->jsonRequest('POST', 'api/v1/movies', [
@@ -148,7 +148,7 @@ class MovieControllerTest extends WebTestCase
         ]);
     }
 
-    public function testUpdate_UpdatesMovie(): void // done!
+    public function testUpdate_UpdatesMovie(): void
     {
         $movie = $this->movieFactory->createOne();
 
@@ -177,7 +177,7 @@ class MovieControllerTest extends WebTestCase
     }
 
     public function testUpdate_ThrowsInvalidParameterException_IfRequestBodyIsMissingValue(): void
-    { // done!
+    {
         $movie = $this->movieFactory->createOne();
 
         $this->expectException(InvalidParameterException::class);
@@ -191,7 +191,7 @@ class MovieControllerTest extends WebTestCase
     }
 
     public function testUpdate_ThrowsInvalidParameterException_IfRequestBodyHasInvalidValue(): void
-    { // done!
+    {
         $movie = $this->movieFactory->createOne();
 
         $this->expectException(InvalidParameterException::class);
@@ -205,7 +205,7 @@ class MovieControllerTest extends WebTestCase
         ]);
     }
 
-    public function testDelete_DeletesShow(): void // done!
+    public function testDelete_DeletesShow(): void
     {
         $movie = $this->movieFactory->createOne();
 
