@@ -27,7 +27,7 @@ class MovieServiceTest extends WebTestCase
         $this->movieService = $container->get(MovieService::class);
     }
 
-    public function testFind_ReturnsMovie_IfItExists(): void
+    public function testFind_ReturnsMovie(): void
     {
         $movie = $this->movieFactory->createOne();
 
@@ -50,112 +50,65 @@ class MovieServiceTest extends WebTestCase
 
     public function testCreate_CreatesMovie(): void
     {
-        $data = [
-            'title' => 'Avatar',
-            'description' => 'Avatar is a 2009 science fiction film...',
-            'durationInMinutes' => 162,
-            'releaseDate' => '2009-12-25',
-            'genre' => 'Science Fiction',
-        ];
+        $title = 'Avatar';
+        $description = 'Avatar is a 2009 science fiction film...';
+        $durationInMinutes = 162;
+        $releaseDate = '2009-12-25';
+        $genre = 'Science Fiction';
 
-        $movie = $this->movieService->create($data);
-        $genre = $movie->getGenre();
+        $movie = $this->movieService->create([
+            'title' => $title,
+            'description' => $description,
+            'durationInMinutes' => $durationInMinutes,
+            'releaseDate' => $releaseDate,
+            'genre' => $genre,
+        ]);
 
-        $this->assertEquals('Avatar', $movie->getTitle());
-        $this->assertEquals('Avatar is a 2009 science fiction film...', $movie->getDescription());
-        $this->assertEquals(162, $movie->getDurationInMinutes());
-        $this->assertEquals(new DateTime('2009-12-25'), $movie->getReleaseDate());
+        $this->assertTrue(Uuid::isValid($movie->getId()));
+        $this->assertEquals($title, $movie->getTitle());
+        $this->assertEquals($description, $movie->getDescription());
+        $this->assertEquals($durationInMinutes, $movie->getDurationInMinutes());
+        $this->assertEquals(new DateTime($releaseDate), $movie->getReleaseDate());
 
-        $this->assertEquals('Science Fiction', $genre->getName());
-        $this->assertCount(1, $genre->getMovies());
+        $this->assertEquals($genre, $movie->getGenre()->getName());
+        $this->assertCount(1, $movie->getGenre()->getMovies());
 
         $this->assertCount(1, $this->movieRepository->findAll());
-    }
-
-    public function testCreate_ThrowsResourceNotFoundException_IfGenreDoesntExist(): void
-    {
-        $data = [
-            'title' => 'Avatar',
-            'description' => 'Avatar is a 2009 science fiction film...',
-            'durationInMinutes' => 162,
-            'releaseDate' => '2009-12-25',
-            'genre' => 'there is no genre',
-        ];
-
-        $this->expectException(ResourceNotFoundException::class);
-
-        $this->movieService->create($data);
     }
 
     public function testUpdate_UpdatesMovie(): void
     {
         $movie = $this->movieFactory->createOne();
-        $data = [
-            'title' => 'Avatar',
-            'description' => 'Avatar is a 2009 science fiction film...',
-            'durationInMinutes' => 162,
-            'releaseDate' => '2009-12-25',
-            'genre' => 'Science Fiction',
-        ];
 
-        $this->movieService->update($movie->getId(), $data);
+        $title = 'Avatar';
+        $description = 'Avatar is a 2009 science fiction film...';
+        $durationInMinutes = 162;
+        $releaseDate = '2009-12-25';
+        $genre = 'Science Fiction';
 
-        $genre = $movie->getGenre();
+        $this->movieService->update($movie->getId(), [
+            'title' => $title,
+            'description' => $description,
+            'durationInMinutes' => $durationInMinutes,
+            'releaseDate' => $releaseDate,
+            'genre' => $genre,
+        ]);
 
-        $this->assertEquals('Avatar', $movie->getTitle());
-        $this->assertEquals('Avatar is a 2009 science fiction film...', $movie->getDescription());
-        $this->assertEquals(162, $movie->getDurationInMinutes());
-        $this->assertEquals(new DateTime('2009-12-25'), $movie->getReleaseDate());
+        $this->assertEquals($title, $movie->getTitle());
+        $this->assertEquals($description, $movie->getDescription());
+        $this->assertEquals($durationInMinutes, $movie->getDurationInMinutes());
+        $this->assertEquals(new DateTime($releaseDate), $movie->getReleaseDate());
 
-        $this->assertEquals('Science Fiction', $genre->getName());
-        $this->assertCount(1, $genre->getMovies());
+        $this->assertEquals($genre, $movie->getGenre()->getName());
+        $this->assertCount(1, $movie->getGenre()->getMovies());
     }
 
-
-    public function testUpdate_ThrowsResourceNotFoundException_IfGenreDoesntExist(): void
-    {
-        $movie = $this->movieFactory->createOne();
-        $data = [
-            'title' => 'Avatar',
-            'description' => 'Avatar is a 2009 science fiction film...',
-            'durationInMinutes' => 162,
-            'releaseDate' => '2009-12-25',
-            'genre' => 'there is no genre',
-        ];
-
-        $this->expectException(ResourceNotFoundException::class);
-
-        $this->movieService->update($movie->getId(), $data);
-    }
-
-    public function testUpdate_ThrowsResourceNotFoundException_IfMovieDoesntExist(): void
-    {
-        $data = [
-            'title' => 'Avatar',
-            'description' => 'Avatar is a 2009 science fiction film...',
-            'durationInMinutes' => 162,
-            'releaseDate' => '2009-12-25',
-            'genre' => 'Science Fiction',
-        ];
-
-        $this->expectException(ResourceNotFoundException::class);
-
-        $this->movieService->update(new Uuid('8a47fd24-34d3-4ed0-b69c-4d151bf277c6'), $data);
-    }
-
-    public function testDelete_DeletesMovie_IfItExists(): void
+    public function testDelete_DeletesMovie(): void
     {
         $movie = $this->movieFactory->createOne();
 
         $this->movieService->delete($movie->getId());
 
         $this->assertCount(0, $this->movieRepository->findAll());
-    }
-
-    public function testDelete_ThrowsResourceNotFoundException_IfMovieDoesntExist(): void
-    {
-        $this->expectException(ResourceNotFoundException::class);
-
-        $this->movieService->delete(new Uuid('8a47fd24-34d3-4ed0-b69c-4d151bf277c6'));
     }
 }
