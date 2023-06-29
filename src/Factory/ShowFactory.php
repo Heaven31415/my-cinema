@@ -27,7 +27,7 @@ class ShowFactory
     {
         $show = new Show();
 
-        $movie = $data['movie'] ?? $this->movieFactory->create();
+        $movie = $data['movie'] ?? $this->movieFactory->createOne();
         $hall = $data['hall'] ?? $this->hallFactory->create();
 
         $movie->addShow($show);

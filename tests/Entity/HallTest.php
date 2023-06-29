@@ -27,7 +27,7 @@ class HallTest extends KernelTestCase
 
     public function testGetShowsForTimeInterval_ReturnsShows_IfTheyAreInsideInterval(): void
     {
-        $movie = $this->movieFactory->create(['durationInMinutes' => 60]);
+        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
         $hall = $this->hallFactory->create();
 
         $showA = $this->showFactory->create(
@@ -44,7 +44,7 @@ class HallTest extends KernelTestCase
 
         $showD = $this->showFactory->create(
             [
-                'movie' => $this->movieFactory->create(['durationInMinutes' => 180]),
+                'movie' => $this->movieFactory->createOne(['durationInMinutes' => 180]),
                 'hall' => $hall,
                 'startTime' => new DateTime('2020-09-28 19:00:00'),
             ]
@@ -65,7 +65,7 @@ class HallTest extends KernelTestCase
 
     public function testGetShowsForTimeInterval_DoesntReturnShows_IfTheyAreNotInsideInterval(): void
     {
-        $movie = $this->movieFactory->create(['durationInMinutes' => 60]);
+        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
         $hall = $this->hallFactory->create();
 
         $this->showFactory->create(
@@ -84,7 +84,7 @@ class HallTest extends KernelTestCase
 
     public function testGetShowsForTimeInterval_DoesntReturnShow_IfItIsExcluded(): void
     {
-        $movie = $this->movieFactory->create(['durationInMinutes' => 60]);
+        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
         $hall = $this->hallFactory->create();
 
         $show = $this->showFactory->create(
@@ -99,7 +99,7 @@ class HallTest extends KernelTestCase
 
     public function testCanPlayMovie_ReturnsTrue_IfThereIsEnoughTimeToPlayMovie(): void
     {
-        $movie = $this->movieFactory->create(['durationInMinutes' => 60]);
+        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
         $hall = $this->hallFactory->create();
 
         $result = $hall->canPlayMovie(new DateTime('2020-09-28 12:00:00'), $movie);
@@ -109,7 +109,7 @@ class HallTest extends KernelTestCase
 
     public function testCanPlayMovie_ReturnsFalse_IfThereIsNotEnoughTimeToPlayMovie(): void
     {
-        $movie = $this->movieFactory->create(['durationInMinutes' => 60]);
+        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
         $hall = $this->hallFactory->create();
 
         $this->showFactory->create(

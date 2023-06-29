@@ -63,7 +63,7 @@ class ShowServiceTest extends WebTestCase
 
     public function testCreate_CreatesShow_IfHallIsAvailable(): void
     {
-        $movie = $this->movieFactory->create(['durationInMinutes' => 60]);
+        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
         $hall = $this->hallFactory->create();
 
         $data = [
@@ -86,7 +86,7 @@ class ShowServiceTest extends WebTestCase
 
     public function testCreate_ThrowsBadRequestException_IfHallIsNotAvailable(): void
     {
-        $movie = $this->movieFactory->create(['durationInMinutes' => 60]);
+        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
         $hall = $this->hallFactory->create();
 
         $this->showFactory->create(
@@ -106,8 +106,8 @@ class ShowServiceTest extends WebTestCase
 
     public function testUpdate_UpdatesShow_IfHallIsAvailable(): void
     {
-        $movieA = $this->movieFactory->create(['durationInMinutes' => 60]);
-        $movieB = $this->movieFactory->create(['durationInMinutes' => 120]);
+        $movieA = $this->movieFactory->createOne(['durationInMinutes' => 60]);
+        $movieB = $this->movieFactory->createOne(['durationInMinutes' => 120]);
 
         $hallA = $this->hallFactory->create();
         $hallB = $this->hallFactory->create();
@@ -139,7 +139,7 @@ class ShowServiceTest extends WebTestCase
 
     public function testUpdate_UpdatesShow_IfItMovesInsideItsTimeInterval(): void
     {
-        $movie = $this->movieFactory->create(['durationInMinutes' => 60]);
+        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
         $hall = $this->hallFactory->create();
 
         $show = $this->showFactory->create(
@@ -161,7 +161,7 @@ class ShowServiceTest extends WebTestCase
 
     public function testUpdate_ThrowsBadRequestException_IfHallIsNotAvailable(): void
     {
-        $movie = $this->movieFactory->create(['durationInMinutes' => 60]);
+        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
         $hall = $this->hallFactory->create();
 
         $this->showFactory->create(
@@ -186,7 +186,7 @@ class ShowServiceTest extends WebTestCase
 
     public function testUpdate_ThrowsResourceNotFoundException_IfShowDoesntExist(): void
     {
-        $movie = $this->movieFactory->create();
+        $movie = $this->movieFactory->createOne();
         $hall = $this->hallFactory->create();
 
         $id = 0;

@@ -24,7 +24,7 @@ class ShowTest extends KernelTestCase
 
     public function testGetEnd_ReturnsProperDateTime(): void
     {
-        $movie = $this->movieFactory->create(['durationInMinutes' => 60]);
+        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
 
         $show = $this->showFactory->create(
             ['movie' => $movie, 'startTime' => new DateTime('2020-09-28 12:00:00')]

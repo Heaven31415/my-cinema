@@ -29,7 +29,7 @@ class MovieServiceTest extends WebTestCase
 
     public function testFind_ReturnsMovie_IfItExists(): void
     {
-        $movie = $this->movieFactory->create();
+        $movie = $this->movieFactory->createOne();
 
         $this->assertEquals($movie, $this->movieService->find($movie->getId()));
     }
@@ -43,7 +43,7 @@ class MovieServiceTest extends WebTestCase
 
     public function testFindAll_ReturnsAllMovies(): void
     {
-        $movies = [$this->movieFactory->create(), $this->movieFactory->create()];
+        $movies = $this->movieFactory->createMany(2);
 
         $this->assertEquals($movies, $this->movieService->findAll());
     }
@@ -89,7 +89,7 @@ class MovieServiceTest extends WebTestCase
 
     public function testUpdate_UpdatesMovie(): void
     {
-        $movie = $this->movieFactory->create();
+        $movie = $this->movieFactory->createOne();
         $data = [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
@@ -114,7 +114,7 @@ class MovieServiceTest extends WebTestCase
 
     public function testUpdate_ThrowsResourceNotFoundException_IfGenreDoesntExist(): void
     {
-        $movie = $this->movieFactory->create();
+        $movie = $this->movieFactory->createOne();
         $data = [
             'title' => 'Avatar',
             'description' => 'Avatar is a 2009 science fiction film...',
@@ -145,7 +145,7 @@ class MovieServiceTest extends WebTestCase
 
     public function testDelete_DeletesMovie_IfItExists(): void
     {
-        $movie = $this->movieFactory->create();
+        $movie = $this->movieFactory->createOne();
 
         $this->movieService->delete($movie->getId());
 

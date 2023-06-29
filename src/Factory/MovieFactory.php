@@ -6,6 +6,7 @@ use App\Entity\Movie;
 use App\Repository\GenreRepository;
 use App\Repository\MovieRepository;
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Faker\Factory;
 use Faker\Generator;
@@ -16,7 +17,8 @@ class MovieFactory
 
     public function __construct(
         private readonly GenreRepository $genreRepository,
-        private readonly MovieRepository $movieRepository
+        private readonly MovieRepository $movieRepository,
+        private readonly EntityManagerInterface $entityManager
     ) {
         $this->faker = Factory::create();
     }
@@ -24,7 +26,7 @@ class MovieFactory
     /**
      * @throws Exception
      */
-    public function create(array $data = []): Movie
+    public function createOne(array $data = [], bool $flush = true): Movie
     {
         $movie = new Movie();
 
@@ -38,8 +40,25 @@ class MovieFactory
             ->setReleaseDate($data['releaseDate'] ?? new DateTime($this->faker->date()))
             ->setGenre($data['genre'] ?? $genres[rand(0, count($genres) - 1)]);
 
-        $this->movieRepository->save($movie, true);
+        $this->movieRepository->save($movie, $flush);
 
         return $movie;
+    }
+
+    /**
+     * @return Movie[]
+     * @throws Exception
+     */
+    public function createMany(int $count): array
+    {
+        $movies = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            $movies[] = $this->createOne([], false);
+        }
+
+        $this->entityManager->flush();
+
+        return $movies;
     }
 }
