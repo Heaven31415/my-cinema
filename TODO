@@ -6,8 +6,7 @@
 - Change example values of request bodies for POST and PUT requests in API docs
 - Implement reservations
 - Improve error messages on production (explanations are too vague)
-- Fix interactions between Movie and Genre
-- Sort entities (Genre, Hall and Movie) by id when returning all of them
-- Add data fixtures for Movies and Shows
-- Improve and/or fix unit and integration tests for Genre, Hall and Movie
+- Sort entities (Genre and Hall) by id when returning all of them
+- Add Show data fixtures
+- Improve and/or fix unit and integration tests for Genre and Hall
 - Implement Show sorting by title, genre and date

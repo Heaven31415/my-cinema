@@ -12,11 +12,11 @@ OpenAPI documentation can be found [here](https://heaven31415-my-cinema.herokuap
 
 ## Project overview
 
-- 3 services
+- 4 services
 - 4 entities
 - 4 controllers
 - 16 endpoints with docs in OpenAPI format
-- 70 unit and integration tests (128 assertions)
+- 67 unit and integration tests (161 assertions)
 - CI support via Github Actions
 - Live version deployed on Heroku
 
