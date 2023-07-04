@@ -4,9 +4,10 @@
 - Add authentication & authorization with: [Lexik JWT](https://github.com/lexik/LexikJWTAuthenticationBundle)
 - Implement reservations
 - Add Docker development setup
-- Change example values of request bodies for POST and PUT requests in API docs
 - Sort entities (Genre and Hall) by id when returning all of them
 - Improve and/or fix unit and integration tests for Genre and Hall
 - Add Show data fixtures
 - Implement Show sorting by date, genre and title
 - Improve factories implementation
+- Fix a missing favicon in API docs
+- Use a cron job to add new shows everyday
