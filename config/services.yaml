@@ -30,3 +30,7 @@ services:
         public: true
     App\Factory\ShowFactory:
         public: true
+    # Always run after FosRestDescriber and PhpDocDescriber
+    App\ApiDoc\RouteDescriber\DuplicatedRequestBodyNormalizer:
+        tags:
+            - { name: nelmio_api_doc.route_describer, priority: -280 }
