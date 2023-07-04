@@ -68,6 +68,26 @@ class HallController extends AbstractFOSRestController
      * Add a new hall
      */
     #[OA\Tag(name: 'halls')]
+    #[OA\RequestBody(content: new OA\MediaType(
+        mediaType: 'application/json', schema: new OA\Schema(properties: [
+        new OA\Property(
+            property: 'name',
+            type: 'string',
+            minLength: 1,
+            example: 'A1'
+        ),
+        new OA\Property(
+            property: 'capacity',
+            type: 'integer',
+            minimum: 1,
+            example: 25
+        ),
+    ],
+        example: [
+            'name' => 'A1',
+            'capacity' => 25,
+        ])
+    ))]
     #[OA\Response(
         response: Response::HTTP_CREATED,
         description: 'Successful operation',
@@ -98,6 +118,26 @@ class HallController extends AbstractFOSRestController
      */
     #[OA\Tag(name: 'halls')]
     #[OA\Parameter(name: 'id', in: 'path', schema: new OA\Schema(type: 'integer'))]
+    #[OA\RequestBody(content: new OA\MediaType(
+        mediaType: 'application/json', schema: new OA\Schema(properties: [
+        new OA\Property(
+            property: 'name',
+            type: 'string',
+            minLength: 1,
+            example: 'A1'
+        ),
+        new OA\Property(
+            property: 'capacity',
+            type: 'integer',
+            minimum: 1,
+            example: 25
+        ),
+    ],
+        example: [
+            'name' => 'A1',
+            'capacity' => 25,
+        ])
+    ))]
     #[OA\Response(
         response: Response::HTTP_NO_CONTENT,
         description: 'Successful operation'
