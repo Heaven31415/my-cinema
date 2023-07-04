@@ -70,6 +70,30 @@ class ShowController extends AbstractFOSRestController
      * @throws Exception
      */
     #[OA\Tag(name: 'shows')]
+    #[OA\RequestBody(content: new OA\MediaType(
+        mediaType: 'application/json', schema: new OA\Schema(properties: [
+        new OA\Property(
+            property: 'movie',
+            type: 'string',
+            example: '8a47fd24-34d3-4ed0-b69c-4d151bf277c6'
+        ),
+        new OA\Property(
+            property: 'hall',
+            type: 'integer',
+            example: '1'
+        ),
+        new OA\Property(
+            property: 'startTime',
+            type: 'datetime',
+            example: '2020-09-28 12:00:00'
+        ),
+    ],
+        example: [
+            'movie' => '8a47fd24-34d3-4ed0-b69c-4d151bf277c6',
+            'hall' => 1,
+            'startTime' => '2020-09-28 12:00:00',
+        ])
+    ))]
     #[OA\Response(
         response: Response::HTTP_CREATED,
         description: 'Successful operation',
@@ -104,6 +128,30 @@ class ShowController extends AbstractFOSRestController
      * @throws Exception
      */
     #[OA\Tag(name: 'shows')]
+    #[OA\RequestBody(content: new OA\MediaType(
+        mediaType: 'application/json', schema: new OA\Schema(properties: [
+        new OA\Property(
+            property: 'movie',
+            type: 'string',
+            example: '8a47fd24-34d3-4ed0-b69c-4d151bf277c6'
+        ),
+        new OA\Property(
+            property: 'hall',
+            type: 'integer',
+            example: '1'
+        ),
+        new OA\Property(
+            property: 'startTime',
+            type: 'datetime',
+            example: '2020-09-28 12:00:00'
+        ),
+    ],
+        example: [
+            'movie' => '8a47fd24-34d3-4ed0-b69c-4d151bf277c6',
+            'hall' => 1,
+            'startTime' => '2020-09-28 12:00:00',
+        ])
+    ))]
     #[OA\Response(
         response: Response::HTTP_NO_CONTENT,
         description: 'Successful operation'

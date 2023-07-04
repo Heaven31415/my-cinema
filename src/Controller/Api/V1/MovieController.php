@@ -71,6 +71,45 @@ class MovieController extends AbstractFOSRestController
      * @throws Exception
      */
     #[OA\Tag(name: 'movies')]
+    #[OA\RequestBody(content: new OA\MediaType(
+        mediaType: 'application/json', schema: new OA\Schema(properties: [
+        new OA\Property(
+            property: 'title',
+            type: 'string',
+            minLength: 1,
+            example: 'Avatar'
+        ),
+        new OA\Property(
+            property: 'description',
+            type: 'string',
+            minLength: 1,
+            example: 'Avatar is a 2009 science fiction film...'
+        ),
+        new OA\Property(
+            property: 'durationInMinutes',
+            type: 'integer',
+            minimum: 1,
+            example: 162
+        ),
+        new OA\Property(
+            property: 'releaseDate',
+            type: 'date',
+            example: '2009-12-25'
+        ),
+        new OA\Property(
+            property: 'genre',
+            type: 'string',
+            example: 'Science Fiction'
+        ),
+    ],
+        example: [
+            'title' => 'Avatar',
+            'description' => 'Avatar is a 2009 science fiction film...',
+            'durationInMinutes' => 162,
+            'releaseDate' => '2009-12-25',
+            'genre' => 'Science Fiction',
+        ])
+    ))]
     #[OA\Response(
         response: Response::HTTP_CREATED,
         description: 'Successful operation',
@@ -113,6 +152,45 @@ class MovieController extends AbstractFOSRestController
      * @throws Exception
      */
     #[OA\Tag(name: 'movies')]
+    #[OA\RequestBody(content: new OA\MediaType(
+        mediaType: 'application/json', schema: new OA\Schema(properties: [
+        new OA\Property(
+            property: 'title',
+            type: 'string',
+            minLength: 1,
+            example: 'Avatar'
+        ),
+        new OA\Property(
+            property: 'description',
+            type: 'string',
+            minLength: 1,
+            example: 'Avatar is a 2009 science fiction film...'
+        ),
+        new OA\Property(
+            property: 'durationInMinutes',
+            type: 'integer',
+            minimum: 1,
+            example: 162
+        ),
+        new OA\Property(
+            property: 'releaseDate',
+            type: 'date',
+            example: '2009-12-25'
+        ),
+        new OA\Property(
+            property: 'genre',
+            type: 'string',
+            example: 'Science Fiction'
+        ),
+    ],
+        example: [
+            'title' => 'Avatar',
+            'description' => 'Avatar is a 2009 science fiction film...',
+            'durationInMinutes' => 162,
+            'releaseDate' => '2009-12-25',
+            'genre' => 'Science Fiction',
+        ])
+    ))]
     #[OA\Response(
         response: Response::HTTP_NO_CONTENT,
         description: 'Successful operation'
