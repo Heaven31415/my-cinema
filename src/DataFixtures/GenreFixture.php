@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Genre;
+use App\Factory\GenreFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -16,33 +16,25 @@ class GenreFixture extends Fixture implements FixtureGroupInterface
 
     public function load(ObjectManager $manager): void
     {
-        $genreNames = array(
-            'Action',
-            'Adventure',
-            'Animation',
-            'Comedy',
-            'Crime',
-            'Documentary',
-            'Drama',
-            'Family',
-            'Fantasy',
-            'History',
-            'Horror',
-            'Music',
-            'Mystery',
-            'Romance',
-            'Science Fiction',
-            'Thriller',
-            'War',
-            'Western',
-        );
-
-        foreach ($genreNames as $genreName) {
-            $genre = new Genre();
-            $genre->setName($genreName);
-            $manager->persist($genre);
-        }
-
-        $manager->flush();
+        GenreFactory::createSequence([
+            ['name' => 'Action'],
+            ['name' => 'Adventure'],
+            ['name' => 'Animation'],
+            ['name' => 'Comedy'],
+            ['name' => 'Crime'],
+            ['name' => 'Documentary'],
+            ['name' => 'Drama'],
+            ['name' => 'Family'],
+            ['name' => 'Fantasy'],
+            ['name' => 'History'],
+            ['name' => 'Horror'],
+            ['name' => 'Music'],
+            ['name' => 'Mystery'],
+            ['name' => 'Romance'],
+            ['name' => 'Science Fiction'],
+            ['name' => 'Thriller'],
+            ['name' => 'War'],
+            ['name' => 'Western'],
+        ]);
     }
 }
