@@ -20,7 +20,6 @@ class ShowControllerTest extends WebTestCase
     use Factories;
 
     protected KernelBrowser $client;
-    protected MovieFactory $movieFactory;
     protected ShowFactory $showFactory;
     protected ShowRepository $showRepository;
     protected final const DATE_TIME_FORMAT = 'Y-m-d H:i:s';
@@ -33,7 +32,6 @@ class ShowControllerTest extends WebTestCase
 
         $container = $this->client->getContainer();
 
-        $this->movieFactory = $container->get(MovieFactory::class);
         $this->showFactory = $container->get(ShowFactory::class);
         $this->showRepository = $container->get(ShowRepository::class);
     }
@@ -96,7 +94,7 @@ class ShowControllerTest extends WebTestCase
 
     public function testCreate_CreatesShow(): void
     {
-        $movie = $this->movieFactory->createOne();
+        $movie = MovieFactory::createOne();
         $hall = HallFactory::createOne();
         $startTime = '2020-09-28 12:00:00';
 
@@ -119,7 +117,7 @@ class ShowControllerTest extends WebTestCase
 
     public function testCreate_ThrowsBadRequestHttpException_IfHallIsNotAvailable(): void
     {
-        $movie = $this->movieFactory->createOne(['durationInMinutes' => 180]);
+        $movie = MovieFactory::createOne(['durationInMinutes' => 180]);
         $hall = HallFactory::createOne(['name' => 'A1']);
 
         $this->showFactory->create(
@@ -138,7 +136,7 @@ class ShowControllerTest extends WebTestCase
 
     public function testCreate_ThrowsBadRequestHttpException_IfRequestIsInvalid(): void
     {
-        $movie = $this->movieFactory->createOne();
+        $movie = MovieFactory::createOne();
         $hall = HallFactory::createOne();
 
         $this->expectException(BadRequestHttpException::class);
@@ -155,7 +153,7 @@ class ShowControllerTest extends WebTestCase
 
     public function testUpdate_UpdatesShow(): void
     {
-        $movie = $this->movieFactory->createOne();
+        $movie = MovieFactory::createOne();
         $hall = HallFactory::createOne();
         $startTime = '2020-09-28 12:00:00';
 
@@ -171,14 +169,14 @@ class ShowControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
         $this->assertTrue($this->client->getResponse()->isEmpty());
 
-        $this->assertEquals($movie, $show->getMovie());
+        $this->assertEquals($movie->object(), $show->getMovie());
         $this->assertEquals($hall->object(), $show->getHall());
         $this->assertEquals($startTime, $show->getStartTime()->format(self::DATE_TIME_FORMAT));
     }
 
     public function testUpdate_ThrowsBadRequestHttpException_IfHallIsNotAvailable(): void
     {
-        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
+        $movie = MovieFactory::createOne(['durationInMinutes' => 60]);
         $hall = HallFactory::createOne(['name' => 'A1']);
 
         $this->showFactory->create(
@@ -201,7 +199,7 @@ class ShowControllerTest extends WebTestCase
 
     public function testUpdate_ThrowsBadRequestHttpException_IfRequestIsInvalid(): void
     {
-        $movie = $this->movieFactory->createOne();
+        $movie = MovieFactory::createOne();
         $hall = HallFactory::createOne();
         $show = $this->showFactory->create(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 19:00:00')]
@@ -222,7 +220,7 @@ class ShowControllerTest extends WebTestCase
 
     public function testUpdate_ThrowsResourceNotFoundException_IfShowDoesntExist(): void
     {
-        $movie = $this->movieFactory->createOne();
+        $movie = MovieFactory::createOne();
         $hall = HallFactory::createOne();
         $id = 0;
 

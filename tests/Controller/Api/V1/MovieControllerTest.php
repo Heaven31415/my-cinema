@@ -4,7 +4,6 @@
 namespace App\Tests\Controller\Api\V1;
 
 use App\Factory\MovieFactory;
-use App\Repository\MovieRepository;
 use FOS\RestBundle\Exception\InvalidParameterException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -18,25 +17,17 @@ class MovieControllerTest extends WebTestCase
     use Factories;
 
     protected KernelBrowser $client;
-    protected MovieFactory $movieFactory;
-    protected MovieRepository $movieRepository;
     protected final const DATE_FORMAT = 'Y-m-d';
 
-    /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
     protected function setUp(): void
     {
         $this->client = static::createClient();
         $this->client->catchExceptions(false);
-
-        $container = $this->client->getContainer();
-
-        $this->movieFactory = $container->get(MovieFactory::class);
-        $this->movieRepository = $container->get(MovieRepository::class);
     }
 
     public function testIndex_ReturnsAllMovies(): void
     {
-        $movies = $this->movieFactory->createMany(2);
+        $movies = MovieFactory::createMany(2);
 
         $this->client->jsonRequest('GET', 'api/v1/movies');
         $response = json_decode($this->client->getResponse()->getContent(), true);
@@ -69,7 +60,7 @@ class MovieControllerTest extends WebTestCase
 
     public function testShow_ReturnsMovie(): void
     {
-        $movie = $this->movieFactory->createOne();
+        $movie = MovieFactory::createOne();
 
         $this->client->jsonRequest('GET', 'api/v1/movies/'.$movie->getId());
         $response = json_decode($this->client->getResponse()->getContent(), true);
@@ -123,7 +114,7 @@ class MovieControllerTest extends WebTestCase
         $this->assertEquals($releaseDate, $response['releaseDate']);
         $this->assertEquals($genre, $response['genre']['name']);
 
-        $this->assertCount(1, $this->movieRepository->findAll());
+        MovieFactory::assert()->count(1);
     }
 
     public function testCreate_ThrowsInvalidParameterException_IfRequestBodyIsMissingValue(): void
@@ -153,7 +144,7 @@ class MovieControllerTest extends WebTestCase
 
     public function testUpdate_UpdatesMovie(): void
     {
-        $movie = $this->movieFactory->createOne();
+        $movie = MovieFactory::createOne();
 
         $title = 'Avatar';
         $description = 'Avatar is a 2009 science fiction film...';
@@ -181,7 +172,7 @@ class MovieControllerTest extends WebTestCase
 
     public function testUpdate_ThrowsInvalidParameterException_IfRequestBodyIsMissingValue(): void
     {
-        $movie = $this->movieFactory->createOne();
+        $movie = MovieFactory::createOne();
 
         $this->expectException(InvalidParameterException::class);
 
@@ -195,7 +186,7 @@ class MovieControllerTest extends WebTestCase
 
     public function testUpdate_ThrowsInvalidParameterException_IfRequestBodyHasInvalidValue(): void
     {
-        $movie = $this->movieFactory->createOne();
+        $movie = MovieFactory::createOne();
 
         $this->expectException(InvalidParameterException::class);
 
@@ -210,14 +201,14 @@ class MovieControllerTest extends WebTestCase
 
     public function testDelete_DeletesShow(): void
     {
-        $movie = $this->movieFactory->createOne();
+        $movie = MovieFactory::createOne();
 
         $this->client->jsonRequest('DELETE', 'api/v1/movies/'.$movie->getId());
 
         $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
         $this->assertTrue($this->client->getResponse()->isEmpty());
 
-        $this->assertCount(0, $this->movieRepository->findAll());
+        MovieFactory::assert()->empty();
     }
 
     public function testDelete_ThrowsResourceNotFoundException_IfMovieDoesntExist(): void

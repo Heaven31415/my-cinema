@@ -13,7 +13,6 @@ class ShowFactory
     private Generator $faker;
 
     public function __construct(
-        private readonly MovieFactory $movieFactory,
         private readonly ShowRepository $showRepository
     ) {
         $this->faker = Factory::create();
@@ -26,7 +25,7 @@ class ShowFactory
     {
         $show = new Show();
 
-        $movie = $data['movie'] ?? $this->movieFactory->createOne();
+        $movie = $data['movie'] ?? MovieFactory::createOne();
         $hall = $data['hall'] ?? HallFactory::createOne();
 
         $movie->addShow($show);

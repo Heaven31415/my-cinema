@@ -3,8 +3,8 @@
 
 namespace App\Tests\Service;
 
+use App\Factory\HallFactory;
 use App\Factory\MovieFactory;
-use App\Repository\MovieRepository;
 use App\Service\MovieService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -16,8 +16,6 @@ class MovieServiceTest extends WebTestCase
 {
     use Factories;
 
-    protected MovieFactory $movieFactory;
-    protected MovieRepository $movieRepository;
     protected MovieService $movieService;
 
     protected function setUp(): void
@@ -25,16 +23,14 @@ class MovieServiceTest extends WebTestCase
         self::bootKernel();
         $container = static::getContainer();
 
-        $this->movieFactory = $container->get(MovieFactory::class);
-        $this->movieRepository = $container->get(MovieRepository::class);
         $this->movieService = $container->get(MovieService::class);
     }
 
     public function testFind_ReturnsMovie(): void
     {
-        $movie = $this->movieFactory->createOne();
+        $movie = MovieFactory::createOne();
 
-        $this->assertEquals($movie, $this->movieService->find($movie->getId()));
+        $this->assertEquals($movie->object(), $this->movieService->find($movie->getId()));
     }
 
     public function testFind_ThrowsResourceNotFoundException_IfMovieDoesntExist(): void
@@ -46,9 +42,12 @@ class MovieServiceTest extends WebTestCase
 
     public function testFindAll_ReturnsAllMovies(): void
     {
-        $movies = $this->movieFactory->createMany(2);
+        $movies = MovieFactory::createMany(2);
 
-        $this->assertEquals($movies, $this->movieService->findAll());
+        $foundMovies = $this->movieService->findAll();
+
+        $this->assertEquals($movies[0]->object(), $foundMovies[0]);
+        $this->assertEquals($movies[1]->object(), $foundMovies[1]);
     }
 
     public function testCreate_CreatesMovie(): void
@@ -76,12 +75,12 @@ class MovieServiceTest extends WebTestCase
         $this->assertEquals($genre, $movie->getGenre()->getName());
         $this->assertCount(1, $movie->getGenre()->getMovies());
 
-        $this->assertCount(1, $this->movieRepository->findAll());
+        MovieFactory::assert()->count(1);
     }
 
     public function testUpdate_UpdatesMovie(): void
     {
-        $movie = $this->movieFactory->createOne();
+        $movie = MovieFactory::createOne();
 
         $title = 'Avatar';
         $description = 'Avatar is a 2009 science fiction film...';
@@ -108,10 +107,10 @@ class MovieServiceTest extends WebTestCase
 
     public function testDelete_DeletesMovie(): void
     {
-        $movie = $this->movieFactory->createOne();
+        $movie = MovieFactory::createOne();
 
         $this->movieService->delete($movie->getId());
 
-        $this->assertCount(0, $this->movieRepository->findAll());
+        HallFactory::assert()->empty();
     }
 }
