@@ -4,26 +4,51 @@ namespace App\Factory;
 
 use App\Entity\Genre;
 use App\Repository\GenreRepository;
-use Faker\Factory;
-use Faker\Generator;
+use Zenstruck\Foundry\ModelFactory;
+use Zenstruck\Foundry\Proxy;
+use Zenstruck\Foundry\RepositoryProxy;
 
-class GenreFactory
+/**
+ * @extends ModelFactory<Genre>
+ *
+ * @method        Genre|Proxy create(array|callable $attributes = [])
+ * @method static Genre|Proxy createOne(array $attributes = [])
+ * @method static Genre|Proxy find(object|array|mixed $criteria)
+ * @method static Genre|Proxy findOrCreate(array $attributes)
+ * @method static Genre|Proxy first(string $sortedField = 'id')
+ * @method static Genre|Proxy last(string $sortedField = 'id')
+ * @method static Genre|Proxy random(array $attributes = [])
+ * @method static Genre|Proxy randomOrCreate(array $attributes = [])
+ * @method static GenreRepository|RepositoryProxy repository()
+ * @method static Genre[]|Proxy[] all()
+ * @method static Genre[]|Proxy[] createMany(int $number, array|callable $attributes = [])
+ * @method static Genre[]|Proxy[] createSequence(iterable|callable $sequence)
+ * @method static Genre[]|Proxy[] findBy(array $attributes)
+ * @method static Genre[]|Proxy[] randomRange(int $min, int $max, array $attributes = [])
+ * @method static Genre[]|Proxy[] randomSet(int $number, array $attributes = [])
+ *
+ */
+final class GenreFactory extends ModelFactory
 {
-    private Generator $faker;
-
-    public function __construct(private readonly GenreRepository $genreRepository)
+    public function __construct()
     {
-        $this->faker = Factory::create();
+        parent::__construct();
     }
 
-    public function create(array $data = []): Genre
+    protected function getDefaults(): array
     {
-        $genre = new Genre();
+        return [
+            'name' => self::faker()->word(),
+        ];
+    }
 
-        $genre->setName($data['name'] ?? $this->faker->word());
+    protected function initialize(): self
+    {
+        return $this;
+    }
 
-        $this->genreRepository->save($genre, true);
-
-        return $genre;
+    protected static function getClass(): string
+    {
+        return Genre::class;
     }
 }
