@@ -7,9 +7,12 @@ use App\Factory\MovieFactory;
 use App\Factory\ShowFactory;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Zenstruck\Foundry\Test\Factories;
 
 class ShowTest extends KernelTestCase
 {
+    use Factories;
+
     protected MovieFactory $movieFactory;
     protected ShowFactory $showFactory;
 

@@ -14,7 +14,6 @@ class ShowFactory
 
     public function __construct(
         private readonly MovieFactory $movieFactory,
-        private readonly HallFactory $hallFactory,
         private readonly ShowRepository $showRepository
     ) {
         $this->faker = Factory::create();
@@ -28,7 +27,7 @@ class ShowFactory
         $show = new Show();
 
         $movie = $data['movie'] ?? $this->movieFactory->createOne();
-        $hall = $data['hall'] ?? $this->hallFactory->create();
+        $hall = $data['hall'] ?? HallFactory::createOne();
 
         $movie->addShow($show);
         $hall->addShow($show);

@@ -8,9 +8,12 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Zenstruck\Foundry\Test\Factories;
 
 class HallControllerTest extends WebTestCase
 {
+    use Factories;
+
     protected KernelBrowser $client;
 
     protected function setUp(): void

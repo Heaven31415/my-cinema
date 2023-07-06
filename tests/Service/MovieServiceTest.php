@@ -10,9 +10,12 @@ use DateTime;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Uid\Uuid;
+use Zenstruck\Foundry\Test\Factories;
 
 class MovieServiceTest extends WebTestCase
 {
+    use Factories;
+
     protected MovieFactory $movieFactory;
     protected MovieRepository $movieRepository;
     protected MovieService $movieService;

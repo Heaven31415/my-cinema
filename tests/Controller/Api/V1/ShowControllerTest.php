@@ -13,12 +13,14 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Zenstruck\Foundry\Test\Factories;
 
 class ShowControllerTest extends WebTestCase
 {
+    use Factories;
+
     protected KernelBrowser $client;
     protected MovieFactory $movieFactory;
-    protected HallFactory $hallFactory;
     protected ShowFactory $showFactory;
     protected ShowRepository $showRepository;
     protected final const DATE_TIME_FORMAT = 'Y-m-d H:i:s';
@@ -32,7 +34,6 @@ class ShowControllerTest extends WebTestCase
         $container = $this->client->getContainer();
 
         $this->movieFactory = $container->get(MovieFactory::class);
-        $this->hallFactory = $container->get(HallFactory::class);
         $this->showFactory = $container->get(ShowFactory::class);
         $this->showRepository = $container->get(ShowRepository::class);
     }
@@ -171,7 +172,7 @@ class ShowControllerTest extends WebTestCase
         $this->assertTrue($this->client->getResponse()->isEmpty());
 
         $this->assertEquals($movie, $show->getMovie());
-        $this->assertEquals($hall, $show->getHall());
+        $this->assertEquals($hall->object(), $show->getHall());
         $this->assertEquals($startTime, $show->getStartTime()->format(self::DATE_TIME_FORMAT));
     }
 
