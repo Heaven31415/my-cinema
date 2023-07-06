@@ -8,11 +8,13 @@ use App\Factory\MovieFactory;
 use App\Factory\ShowFactory;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Zenstruck\Foundry\Test\Factories;
 
 class HallTest extends KernelTestCase
 {
+    use Factories;
+
     protected MovieFactory $movieFactory;
-    protected HallFactory $hallFactory;
     protected ShowFactory $showFactory;
 
     protected function setUp(): void
@@ -21,14 +23,13 @@ class HallTest extends KernelTestCase
         $container = static::getContainer();
 
         $this->movieFactory = $container->get(MovieFactory::class);
-        $this->hallFactory = $container->get(HallFactory::class);
         $this->showFactory = $container->get(ShowFactory::class);
     }
 
     public function testGetShowsForTimeInterval_ReturnsShows_IfTheyAreInsideInterval(): void
     {
         $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
-        $hall = $this->hallFactory->create();
+        $hall = HallFactory::createOne();
 
         $showA = $this->showFactory->create(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 18:30:00')]
@@ -66,7 +67,7 @@ class HallTest extends KernelTestCase
     public function testGetShowsForTimeInterval_DoesntReturnShows_IfTheyAreNotInsideInterval(): void
     {
         $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
-        $hall = $this->hallFactory->create();
+        $hall = HallFactory::createOne();
 
         $this->showFactory->create(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 17:00:00')]
@@ -85,7 +86,7 @@ class HallTest extends KernelTestCase
     public function testGetShowsForTimeInterval_DoesntReturnShow_IfItIsExcluded(): void
     {
         $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
-        $hall = $this->hallFactory->create();
+        $hall = HallFactory::createOne();
 
         $show = $this->showFactory->create(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 12:00:00')]
@@ -100,7 +101,7 @@ class HallTest extends KernelTestCase
     public function testCanPlayMovie_ReturnsTrue_IfThereIsEnoughTimeToPlayMovie(): void
     {
         $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
-        $hall = $this->hallFactory->create();
+        $hall = HallFactory::createOne();
 
         $result = $hall->canPlayMovie(new DateTime('2020-09-28 12:00:00'), $movie);
 
@@ -110,7 +111,7 @@ class HallTest extends KernelTestCase
     public function testCanPlayMovie_ReturnsFalse_IfThereIsNotEnoughTimeToPlayMovie(): void
     {
         $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
-        $hall = $this->hallFactory->create();
+        $hall = HallFactory::createOne();
 
         $this->showFactory->create(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 11:30:00')]
