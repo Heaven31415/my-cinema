@@ -4,37 +4,55 @@ namespace App\Factory;
 
 use App\Entity\Show;
 use App\Repository\ShowRepository;
-use Exception;
-use Faker\Factory;
-use Faker\Generator;
+use Zenstruck\Foundry\ModelFactory;
+use Zenstruck\Foundry\Proxy;
+use Zenstruck\Foundry\RepositoryProxy;
 
-class ShowFactory
+use function Zenstruck\Foundry\lazy;
+
+/**
+ * @extends ModelFactory<Show>
+ *
+ * @method        Show|Proxy create(array|callable $attributes = [])
+ * @method static Show|Proxy createOne(array $attributes = [])
+ * @method static Show|Proxy find(object|array|mixed $criteria)
+ * @method static Show|Proxy findOrCreate(array $attributes)
+ * @method static Show|Proxy first(string $sortedField = 'id')
+ * @method static Show|Proxy last(string $sortedField = 'id')
+ * @method static Show|Proxy random(array $attributes = [])
+ * @method static Show|Proxy randomOrCreate(array $attributes = [])
+ * @method static ShowRepository|RepositoryProxy repository()
+ * @method static Show[]|Proxy[] all()
+ * @method static Show[]|Proxy[] createMany(int $number, array|callable $attributes = [])
+ * @method static Show[]|Proxy[] createSequence(iterable|callable $sequence)
+ * @method static Show[]|Proxy[] findBy(array $attributes)
+ * @method static Show[]|Proxy[] randomRange(int $min, int $max, array $attributes = [])
+ * @method static Show[]|Proxy[] randomSet(int $number, array $attributes = [])
+ *
+ */
+final class ShowFactory extends ModelFactory
 {
-    private Generator $faker;
-
-    public function __construct(
-        private readonly ShowRepository $showRepository
-    ) {
-        $this->faker = Factory::create();
+    public function __construct()
+    {
+        parent::__construct();
     }
 
-    /**
-     * @throws Exception
-     */
-    public function create(array $data = []): Show
+    protected function getDefaults(): array
     {
-        $show = new Show();
+        return [
+            'hall' => lazy(fn() => HallFactory::new()),
+            'movie' => lazy(fn() => MovieFactory::new()),
+            'startTime' => self::faker()->dateTime(),
+        ];
+    }
 
-        $movie = $data['movie'] ?? MovieFactory::createOne();
-        $hall = $data['hall'] ?? HallFactory::createOne();
+    protected function initialize(): self
+    {
+        return $this;
+    }
 
-        $movie->addShow($show);
-        $hall->addShow($show);
-
-        $show->setStartTime($data['startTime'] ?? $this->faker->dateTime());
-
-        $this->showRepository->save($show, true);
-
-        return $show;
+    protected static function getClass(): string
+    {
+        return Show::class;
     }
 }

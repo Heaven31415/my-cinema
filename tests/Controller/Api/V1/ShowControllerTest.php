@@ -6,7 +6,6 @@ namespace App\Tests\Controller\Api\V1;
 use App\Factory\HallFactory;
 use App\Factory\MovieFactory;
 use App\Factory\ShowFactory;
-use App\Repository\ShowRepository;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -20,26 +19,18 @@ class ShowControllerTest extends WebTestCase
     use Factories;
 
     protected KernelBrowser $client;
-    protected ShowFactory $showFactory;
-    protected ShowRepository $showRepository;
     protected final const DATE_TIME_FORMAT = 'Y-m-d H:i:s';
 
-    /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
     protected function setUp(): void
     {
         $this->client = static::createClient();
         $this->client->catchExceptions(false);
-
-        $container = $this->client->getContainer();
-
-        $this->showFactory = $container->get(ShowFactory::class);
-        $this->showRepository = $container->get(ShowRepository::class);
     }
 
     public function testIndex_ReturnsAllShows(): void
     {
-        $showA = $this->showFactory->create();
-        $showB = $this->showFactory->create();
+        $showA = ShowFactory::createOne();
+        $showB = ShowFactory::createOne();
 
         $this->client->jsonRequest('GET', 'api/v1/shows');
         $response = json_decode($this->client->getResponse()->getContent(), true);
@@ -66,7 +57,7 @@ class ShowControllerTest extends WebTestCase
 
     public function testShow_ReturnsShow(): void
     {
-        $show = $this->showFactory->create();
+        $show = ShowFactory::createOne();
         $id = $show->getId();
 
         $this->client->jsonRequest('GET', 'api/v1/shows/'.$id);
@@ -112,7 +103,7 @@ class ShowControllerTest extends WebTestCase
         $this->assertEquals($hall->getId(), $response['hall']['id']);
         $this->assertEquals($startTime, $response['startTime']);
 
-        $this->assertCount(1, $this->showRepository->findAll());
+        ShowFactory::assert()->count(1);
     }
 
     public function testCreate_ThrowsBadRequestHttpException_IfHallIsNotAvailable(): void
@@ -120,7 +111,7 @@ class ShowControllerTest extends WebTestCase
         $movie = MovieFactory::createOne(['durationInMinutes' => 180]);
         $hall = HallFactory::createOne(['name' => 'A1']);
 
-        $this->showFactory->create(
+        ShowFactory::createOne(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 19:00:00')]
         );
 
@@ -157,7 +148,7 @@ class ShowControllerTest extends WebTestCase
         $hall = HallFactory::createOne();
         $startTime = '2020-09-28 12:00:00';
 
-        $show = $this->showFactory->create();
+        $show = ShowFactory::createOne();
         $id = $show->getId();
 
         $this->client->jsonRequest('PUT', 'api/v1/shows/'.$id, [
@@ -179,10 +170,10 @@ class ShowControllerTest extends WebTestCase
         $movie = MovieFactory::createOne(['durationInMinutes' => 60]);
         $hall = HallFactory::createOne(['name' => 'A1']);
 
-        $this->showFactory->create(
+        ShowFactory::createOne(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 19:00:00')]
         );
-        $show = $this->showFactory->create(
+        $show = ShowFactory::createOne(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 20:00:00')]
         );
         $id = $show->getId();
@@ -201,7 +192,7 @@ class ShowControllerTest extends WebTestCase
     {
         $movie = MovieFactory::createOne();
         $hall = HallFactory::createOne();
-        $show = $this->showFactory->create(
+        $show = ShowFactory::createOne(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 19:00:00')]
         );
         $id = $show->getId();
@@ -235,7 +226,7 @@ class ShowControllerTest extends WebTestCase
 
     public function testDelete_DeletesShow(): void
     {
-        $show = $this->showFactory->create();
+        $show = ShowFactory::createOne();
         $id = $show->getId();
 
         $this->client->jsonRequest('DELETE', 'api/v1/shows/'.$id);
@@ -243,7 +234,7 @@ class ShowControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
         $this->assertTrue($this->client->getResponse()->isEmpty());
 
-        $this->assertCount(0, $this->showRepository->findAll());
+        ShowFactory::assert()->empty();
     }
 
     public function testDelete_ThrowsResourceNotFoundException_IfShowDoesntExist(): void

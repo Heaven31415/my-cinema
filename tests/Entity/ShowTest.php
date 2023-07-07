@@ -13,21 +13,11 @@ class ShowTest extends KernelTestCase
 {
     use Factories;
 
-    protected ShowFactory $showFactory;
-
-    protected function setUp(): void
-    {
-        self::bootKernel();
-        $container = static::getContainer();
-
-        $this->showFactory = $container->get(ShowFactory::class);
-    }
-
     public function testGetEnd_ReturnsProperDateTime(): void
     {
         $movie = MovieFactory::createOne(['durationInMinutes' => 60]);
 
-        $show = $this->showFactory->create(
+        $show = ShowFactory::createOne(
             ['movie' => $movie, 'startTime' => new DateTime('2020-09-28 12:00:00')]
         );
 

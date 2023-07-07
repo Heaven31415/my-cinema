@@ -6,7 +6,6 @@ namespace App\Tests\Service;
 use App\Factory\HallFactory;
 use App\Factory\MovieFactory;
 use App\Factory\ShowFactory;
-use App\Repository\ShowRepository;
 use App\Service\ShowService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -17,8 +16,7 @@ use Zenstruck\Foundry\Test\Factories;
 class ShowServiceTest extends WebTestCase
 {
     use Factories;
-    protected ShowFactory $showFactory;
-    protected ShowRepository $showRepository;
+
     protected ShowService $showService;
 
     protected function setUp(): void
@@ -26,19 +24,17 @@ class ShowServiceTest extends WebTestCase
         self::bootKernel();
         $container = static::getContainer();
 
-        $this->showFactory = $container->get(ShowFactory::class);
-        $this->showRepository = $container->get(ShowRepository::class);
         $this->showService = $container->get(ShowService::class);
     }
 
     public function testFind_ReturnsShow_IfItExists(): void
     {
-        $show = $this->showFactory->create();
+        $show = ShowFactory::createOne();
         $id = $show->getId();
 
         $foundShow = $this->showService->find($id);
 
-        $this->assertEquals($show, $foundShow);
+        $this->assertEquals($show->object(), $foundShow);
     }
 
     public function testFind_ThrowsResourceNotFoundException_IfShowDoesntExist(): void
@@ -52,11 +48,12 @@ class ShowServiceTest extends WebTestCase
 
     public function testFindAll_ReturnsAllShows(): void
     {
-        $shows = [$this->showFactory->create(), $this->showFactory->create()];
+        $shows = ShowFactory::createMany(2);
 
         $foundShows = $this->showService->findAll();
 
-        $this->assertEquals($shows, $foundShows);
+        $this->assertEquals($shows[0]->object(), $foundShows[0]);
+        $this->assertEquals($shows[1]->object(), $foundShows[1]);
     }
 
     public function testCreate_CreatesShow_IfHallIsAvailable(): void
@@ -87,7 +84,7 @@ class ShowServiceTest extends WebTestCase
         $movie = MovieFactory::createOne(['durationInMinutes' => 60]);
         $hall = HallFactory::createOne();
 
-        $this->showFactory->create(
+        ShowFactory::createOne(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 12:00:00')]
         );
 
@@ -110,13 +107,11 @@ class ShowServiceTest extends WebTestCase
         $hallA = HallFactory::createOne();
         $hallB = HallFactory::createOne();
 
-        $show = $this->showFactory->create(
-            [
-                'movie' => $movieA,
-                'hall' => $hallA,
-                'startTime' => new DateTime('2020-09-28 12:00:00'),
-            ]
-        );
+        $show = ShowFactory::createOne([
+            'movie' => $movieA,
+            'hall' => $hallA,
+            'startTime' => new DateTime('2020-09-28 12:00:00'),
+        ]);
 
         $id = $show->getId();
         $data = [
@@ -144,7 +139,7 @@ class ShowServiceTest extends WebTestCase
         $movie = MovieFactory::createOne(['durationInMinutes' => 60]);
         $hall = HallFactory::createOne();
 
-        $show = $this->showFactory->create(
+        $show = ShowFactory::createOne(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 12:00:00')]
         );
 
@@ -166,11 +161,11 @@ class ShowServiceTest extends WebTestCase
         $movie = MovieFactory::createOne(['durationInMinutes' => 60]);
         $hall = HallFactory::createOne();
 
-        $this->showFactory->create(
+        ShowFactory::createOne(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 12:00:00')]
         );
 
-        $show = $this->showFactory->create(
+        $show = ShowFactory::createOne(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 14:00:00')]
         );
 
@@ -205,12 +200,12 @@ class ShowServiceTest extends WebTestCase
 
     public function testDelete_DeletesShow_IfItExists(): void
     {
-        $show = $this->showFactory->create();
+        $show = ShowFactory::createOne();
         $id = $show->getId();
 
         $this->showService->delete($id);
 
-        $this->assertCount(0, $this->showRepository->findAll());
+        ShowFactory::assert()->empty();
     }
 
     public function testDelete_ThrowsResourceNotFoundException_IfShowDoesntExist(): void
