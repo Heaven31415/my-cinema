@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Hall;
+use App\Factory\HallFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -16,7 +16,7 @@ class HallFixture extends Fixture implements FixtureGroupInterface
 
     public function load(ObjectManager $manager): void
     {
-        $hallsData = [
+        HallFactory::createSequence([
             ['name' => 'A1', 'capacity' => 25],
             ['name' => 'A2', 'capacity' => 25],
             ['name' => 'A3', 'capacity' => 25],
@@ -26,17 +26,6 @@ class HallFixture extends Fixture implements FixtureGroupInterface
             ['name' => 'C1', 'capacity' => 100],
             ['name' => 'C2', 'capacity' => 100],
             ['name' => 'D1', 'capacity' => 200],
-        ];
-
-        foreach ($hallsData as $hallsDatum) {
-            $hall = new Hall();
-
-            $hall->setName($hallsDatum['name'])
-                ->setCapacity($hallsDatum['capacity']);
-
-            $manager->persist($hall);
-        }
-
-        $manager->flush();
+        ]);
     }
 }

@@ -6,41 +6,31 @@ namespace App\Tests\Controller\Api\V1;
 use App\Factory\HallFactory;
 use App\Factory\MovieFactory;
 use App\Factory\ShowFactory;
-use App\Repository\ShowRepository;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Zenstruck\Foundry\Test\Factories;
 
 class ShowControllerTest extends WebTestCase
 {
+    use Factories;
+
     protected KernelBrowser $client;
-    protected MovieFactory $movieFactory;
-    protected HallFactory $hallFactory;
-    protected ShowFactory $showFactory;
-    protected ShowRepository $showRepository;
     protected final const DATE_TIME_FORMAT = 'Y-m-d H:i:s';
 
-    /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
     protected function setUp(): void
     {
         $this->client = static::createClient();
         $this->client->catchExceptions(false);
-
-        $container = $this->client->getContainer();
-
-        $this->movieFactory = $container->get(MovieFactory::class);
-        $this->hallFactory = $container->get(HallFactory::class);
-        $this->showFactory = $container->get(ShowFactory::class);
-        $this->showRepository = $container->get(ShowRepository::class);
     }
 
     public function testIndex_ReturnsAllShows(): void
     {
-        $showA = $this->showFactory->create();
-        $showB = $this->showFactory->create();
+        $showA = ShowFactory::createOne();
+        $showB = ShowFactory::createOne();
 
         $this->client->jsonRequest('GET', 'api/v1/shows');
         $response = json_decode($this->client->getResponse()->getContent(), true);
@@ -67,7 +57,7 @@ class ShowControllerTest extends WebTestCase
 
     public function testShow_ReturnsShow(): void
     {
-        $show = $this->showFactory->create();
+        $show = ShowFactory::createOne();
         $id = $show->getId();
 
         $this->client->jsonRequest('GET', 'api/v1/shows/'.$id);
@@ -95,8 +85,8 @@ class ShowControllerTest extends WebTestCase
 
     public function testCreate_CreatesShow(): void
     {
-        $movie = $this->movieFactory->createOne();
-        $hall = $this->hallFactory->create();
+        $movie = MovieFactory::createOne();
+        $hall = HallFactory::createOne();
         $startTime = '2020-09-28 12:00:00';
 
         $this->client->jsonRequest('POST', 'api/v1/shows', [
@@ -113,15 +103,15 @@ class ShowControllerTest extends WebTestCase
         $this->assertEquals($hall->getId(), $response['hall']['id']);
         $this->assertEquals($startTime, $response['startTime']);
 
-        $this->assertCount(1, $this->showRepository->findAll());
+        ShowFactory::assert()->count(1);
     }
 
     public function testCreate_ThrowsBadRequestHttpException_IfHallIsNotAvailable(): void
     {
-        $movie = $this->movieFactory->createOne(['durationInMinutes' => 180]);
-        $hall = $this->hallFactory->create(['name' => 'A1']);
+        $movie = MovieFactory::createOne(['durationInMinutes' => 180]);
+        $hall = HallFactory::createOne(['name' => 'A1']);
 
-        $this->showFactory->create(
+        ShowFactory::createOne(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 19:00:00')]
         );
 
@@ -137,8 +127,8 @@ class ShowControllerTest extends WebTestCase
 
     public function testCreate_ThrowsBadRequestHttpException_IfRequestIsInvalid(): void
     {
-        $movie = $this->movieFactory->createOne();
-        $hall = $this->hallFactory->create();
+        $movie = MovieFactory::createOne();
+        $hall = HallFactory::createOne();
 
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage(
@@ -154,11 +144,11 @@ class ShowControllerTest extends WebTestCase
 
     public function testUpdate_UpdatesShow(): void
     {
-        $movie = $this->movieFactory->createOne();
-        $hall = $this->hallFactory->create();
+        $movie = MovieFactory::createOne();
+        $hall = HallFactory::createOne();
         $startTime = '2020-09-28 12:00:00';
 
-        $show = $this->showFactory->create();
+        $show = ShowFactory::createOne();
         $id = $show->getId();
 
         $this->client->jsonRequest('PUT', 'api/v1/shows/'.$id, [
@@ -170,20 +160,20 @@ class ShowControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
         $this->assertTrue($this->client->getResponse()->isEmpty());
 
-        $this->assertEquals($movie, $show->getMovie());
-        $this->assertEquals($hall, $show->getHall());
+        $this->assertEquals($movie->object(), $show->getMovie());
+        $this->assertEquals($hall->object(), $show->getHall());
         $this->assertEquals($startTime, $show->getStartTime()->format(self::DATE_TIME_FORMAT));
     }
 
     public function testUpdate_ThrowsBadRequestHttpException_IfHallIsNotAvailable(): void
     {
-        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
-        $hall = $this->hallFactory->create(['name' => 'A1']);
+        $movie = MovieFactory::createOne(['durationInMinutes' => 60]);
+        $hall = HallFactory::createOne(['name' => 'A1']);
 
-        $this->showFactory->create(
+        ShowFactory::createOne(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 19:00:00')]
         );
-        $show = $this->showFactory->create(
+        $show = ShowFactory::createOne(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 20:00:00')]
         );
         $id = $show->getId();
@@ -200,9 +190,9 @@ class ShowControllerTest extends WebTestCase
 
     public function testUpdate_ThrowsBadRequestHttpException_IfRequestIsInvalid(): void
     {
-        $movie = $this->movieFactory->createOne();
-        $hall = $this->hallFactory->create();
-        $show = $this->showFactory->create(
+        $movie = MovieFactory::createOne();
+        $hall = HallFactory::createOne();
+        $show = ShowFactory::createOne(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 19:00:00')]
         );
         $id = $show->getId();
@@ -221,8 +211,8 @@ class ShowControllerTest extends WebTestCase
 
     public function testUpdate_ThrowsResourceNotFoundException_IfShowDoesntExist(): void
     {
-        $movie = $this->movieFactory->createOne();
-        $hall = $this->hallFactory->create();
+        $movie = MovieFactory::createOne();
+        $hall = HallFactory::createOne();
         $id = 0;
 
         $this->expectException(ResourceNotFoundException::class);
@@ -236,7 +226,7 @@ class ShowControllerTest extends WebTestCase
 
     public function testDelete_DeletesShow(): void
     {
-        $show = $this->showFactory->create();
+        $show = ShowFactory::createOne();
         $id = $show->getId();
 
         $this->client->jsonRequest('DELETE', 'api/v1/shows/'.$id);
@@ -244,7 +234,7 @@ class ShowControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(Response::HTTP_NO_CONTENT);
         $this->assertTrue($this->client->getResponse()->isEmpty());
 
-        $this->assertCount(0, $this->showRepository->findAll());
+        ShowFactory::assert()->empty();
     }
 
     public function testDelete_ThrowsResourceNotFoundException_IfShowDoesntExist(): void

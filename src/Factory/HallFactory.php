@@ -4,27 +4,52 @@ namespace App\Factory;
 
 use App\Entity\Hall;
 use App\Repository\HallRepository;
-use Faker\Factory;
-use Faker\Generator;
+use Zenstruck\Foundry\ModelFactory;
+use Zenstruck\Foundry\Proxy;
+use Zenstruck\Foundry\RepositoryProxy;
 
-class HallFactory
+/**
+ * @extends ModelFactory<Hall>
+ *
+ * @method        Hall|Proxy create(array|callable $attributes = [])
+ * @method static Hall|Proxy createOne(array $attributes = [])
+ * @method static Hall|Proxy find(object|array|mixed $criteria)
+ * @method static Hall|Proxy findOrCreate(array $attributes)
+ * @method static Hall|Proxy first(string $sortedField = 'id')
+ * @method static Hall|Proxy last(string $sortedField = 'id')
+ * @method static Hall|Proxy random(array $attributes = [])
+ * @method static Hall|Proxy randomOrCreate(array $attributes = [])
+ * @method static HallRepository|RepositoryProxy repository()
+ * @method static Hall[]|Proxy[] all()
+ * @method static Hall[]|Proxy[] createMany(int $number, array|callable $attributes = [])
+ * @method static Hall[]|Proxy[] createSequence(iterable|callable $sequence)
+ * @method static Hall[]|Proxy[] findBy(array $attributes)
+ * @method static Hall[]|Proxy[] randomRange(int $min, int $max, array $attributes = [])
+ * @method static Hall[]|Proxy[] randomSet(int $number, array $attributes = [])
+ *
+ */
+final class HallFactory extends ModelFactory
 {
-    private Generator $faker;
-
-    public function __construct(private readonly HallRepository $hallRepository)
+    public function __construct()
     {
-        $this->faker = Factory::create();
+        parent::__construct();
     }
 
-    public function create(array $data = []): Hall
+    protected function getDefaults(): array
     {
-        $hall = new Hall();
+        return [
+            'capacity' => self::faker()->randomElement([25, 50, 100, 200]),
+            'name' => self::faker()->word(),
+        ];
+    }
 
-        $hall->setName($data['name'] ?? $this->faker->word())
-            ->setCapacity($data['capacity'] ?? $this->faker->randomElement([25, 50, 100, 200]));
+    protected function initialize(): self
+    {
+        return $this;
+    }
 
-        $this->hallRepository->save($hall, true);
-
-        return $hall;
+    protected static function getClass(): string
+    {
+        return Hall::class;
     }
 }

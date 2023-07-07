@@ -7,10 +7,12 @@ use App\Factory\GenreFactory;
 use App\Service\GenreService;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Zenstruck\Foundry\Test\Factories;
 
 class GenreServiceTest extends WebTestCase
 {
-    protected GenreFactory $genreFactory;
+    use Factories;
+
     protected GenreService $genreService;
 
     protected function setUp(): void
@@ -18,16 +20,15 @@ class GenreServiceTest extends WebTestCase
         self::bootKernel();
         $container = static::getContainer();
 
-        $this->genreFactory = $container->get(GenreFactory::class);
         $this->genreService = $container->get(GenreService::class);
     }
 
     public function testFindByName_ReturnsGenre_IfItExists(): void
     {
-        $genre = $this->genreFactory->create();
+        $genre = GenreFactory::createOne();
         $name = $genre->getName();
 
-        $this->assertEquals($genre, $this->genreService->findByName($name));
+        $this->assertEquals($genre->object(), $this->genreService->findByName($name));
     }
 
     public function testFindByName_ThrowsResourceNotFoundException_IfGenreDoesntExist(): void

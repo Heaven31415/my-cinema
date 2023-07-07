@@ -6,19 +6,17 @@ namespace App\Tests\Service;
 use App\Factory\HallFactory;
 use App\Factory\MovieFactory;
 use App\Factory\ShowFactory;
-use App\Repository\ShowRepository;
 use App\Service\ShowService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Zenstruck\Foundry\Test\Factories;
 
 class ShowServiceTest extends WebTestCase
 {
-    protected MovieFactory $movieFactory;
-    protected HallFactory $hallFactory;
-    protected ShowFactory $showFactory;
-    protected ShowRepository $showRepository;
+    use Factories;
+
     protected ShowService $showService;
 
     protected function setUp(): void
@@ -26,21 +24,17 @@ class ShowServiceTest extends WebTestCase
         self::bootKernel();
         $container = static::getContainer();
 
-        $this->movieFactory = $container->get(MovieFactory::class);
-        $this->hallFactory = $container->get(HallFactory::class);
-        $this->showFactory = $container->get(ShowFactory::class);
-        $this->showRepository = $container->get(ShowRepository::class);
         $this->showService = $container->get(ShowService::class);
     }
 
     public function testFind_ReturnsShow_IfItExists(): void
     {
-        $show = $this->showFactory->create();
+        $show = ShowFactory::createOne();
         $id = $show->getId();
 
         $foundShow = $this->showService->find($id);
 
-        $this->assertEquals($show, $foundShow);
+        $this->assertEquals($show->object(), $foundShow);
     }
 
     public function testFind_ThrowsResourceNotFoundException_IfShowDoesntExist(): void
@@ -54,17 +48,18 @@ class ShowServiceTest extends WebTestCase
 
     public function testFindAll_ReturnsAllShows(): void
     {
-        $shows = [$this->showFactory->create(), $this->showFactory->create()];
+        $shows = ShowFactory::createMany(2);
 
         $foundShows = $this->showService->findAll();
 
-        $this->assertEquals($shows, $foundShows);
+        $this->assertEquals($shows[0]->object(), $foundShows[0]);
+        $this->assertEquals($shows[1]->object(), $foundShows[1]);
     }
 
     public function testCreate_CreatesShow_IfHallIsAvailable(): void
     {
-        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
-        $hall = $this->hallFactory->create();
+        $movie = MovieFactory::createOne(['durationInMinutes' => 60]);
+        $hall = HallFactory::createOne();
 
         $data = [
             'movie' => $movie->getId(),
@@ -74,10 +69,10 @@ class ShowServiceTest extends WebTestCase
 
         $show = $this->showService->create($data);
 
-        $this->assertEquals($movie, $show->getMovie());
+        $this->assertEquals($movie->object(), $show->getMovie());
         $this->assertCount(1, $movie->getShows());
 
-        $this->assertEquals($hall, $show->getHall());
+        $this->assertEquals($hall->object(), $show->getHall());
         $this->assertCount(1, $hall->getShows());
 
         $this->assertEquals(new DateTime('2020-09-28 12:00:00'), $show->getStartTime());
@@ -86,10 +81,10 @@ class ShowServiceTest extends WebTestCase
 
     public function testCreate_ThrowsBadRequestException_IfHallIsNotAvailable(): void
     {
-        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
-        $hall = $this->hallFactory->create();
+        $movie = MovieFactory::createOne(['durationInMinutes' => 60]);
+        $hall = HallFactory::createOne();
 
-        $this->showFactory->create(
+        ShowFactory::createOne(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 12:00:00')]
         );
 
@@ -106,15 +101,17 @@ class ShowServiceTest extends WebTestCase
 
     public function testUpdate_UpdatesShow_IfHallIsAvailable(): void
     {
-        $movieA = $this->movieFactory->createOne(['durationInMinutes' => 60]);
-        $movieB = $this->movieFactory->createOne(['durationInMinutes' => 120]);
+        $movieA = MovieFactory::createOne(['durationInMinutes' => 60]);
+        $movieB = MovieFactory::createOne(['durationInMinutes' => 120]);
 
-        $hallA = $this->hallFactory->create();
-        $hallB = $this->hallFactory->create();
+        $hallA = HallFactory::createOne();
+        $hallB = HallFactory::createOne();
 
-        $show = $this->showFactory->create(
-            ['movie' => $movieA, 'hall' => $hallA, 'startTime' => new DateTime('2020-09-28 12:00:00')]
-        );
+        $show = ShowFactory::createOne([
+            'movie' => $movieA,
+            'hall' => $hallA,
+            'startTime' => new DateTime('2020-09-28 12:00:00'),
+        ]);
 
         $id = $show->getId();
         $data = [
@@ -127,11 +124,11 @@ class ShowServiceTest extends WebTestCase
 
         $this->assertCount(0, $movieA->getShows());
         $this->assertCount(1, $movieB->getShows());
-        $this->assertEquals($movieB, $show->getMovie());
+        $this->assertEquals($movieB->object(), $show->getMovie());
 
         $this->assertCount(0, $hallA->getShows());
         $this->assertCount(1, $hallB->getShows());
-        $this->assertEquals($hallB, $show->getHall());
+        $this->assertEquals($hallB->object(), $show->getHall());
 
         $this->assertEquals(new DateTime('2020-09-28 13:00:00'), $show->getStartTime());
         $this->assertEquals(new DateTime('2020-09-28 15:00:00'), $show->getEndTime());
@@ -139,10 +136,10 @@ class ShowServiceTest extends WebTestCase
 
     public function testUpdate_UpdatesShow_IfItMovesInsideItsTimeInterval(): void
     {
-        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
-        $hall = $this->hallFactory->create();
+        $movie = MovieFactory::createOne(['durationInMinutes' => 60]);
+        $hall = HallFactory::createOne();
 
-        $show = $this->showFactory->create(
+        $show = ShowFactory::createOne(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 12:00:00')]
         );
 
@@ -161,14 +158,14 @@ class ShowServiceTest extends WebTestCase
 
     public function testUpdate_ThrowsBadRequestException_IfHallIsNotAvailable(): void
     {
-        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
-        $hall = $this->hallFactory->create();
+        $movie = MovieFactory::createOne(['durationInMinutes' => 60]);
+        $hall = HallFactory::createOne();
 
-        $this->showFactory->create(
+        ShowFactory::createOne(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 12:00:00')]
         );
 
-        $show = $this->showFactory->create(
+        $show = ShowFactory::createOne(
             ['movie' => $movie, 'hall' => $hall, 'startTime' => new DateTime('2020-09-28 14:00:00')]
         );
 
@@ -186,8 +183,8 @@ class ShowServiceTest extends WebTestCase
 
     public function testUpdate_ThrowsResourceNotFoundException_IfShowDoesntExist(): void
     {
-        $movie = $this->movieFactory->createOne();
-        $hall = $this->hallFactory->create();
+        $movie = MovieFactory::createOne();
+        $hall = HallFactory::createOne();
 
         $id = 0;
         $data = [
@@ -203,12 +200,12 @@ class ShowServiceTest extends WebTestCase
 
     public function testDelete_DeletesShow_IfItExists(): void
     {
-        $show = $this->showFactory->create();
+        $show = ShowFactory::createOne();
         $id = $show->getId();
 
         $this->showService->delete($id);
 
-        $this->assertCount(0, $this->showRepository->findAll());
+        ShowFactory::assert()->empty();
     }
 
     public function testDelete_ThrowsResourceNotFoundException_IfShowDoesntExist(): void

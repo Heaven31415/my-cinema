@@ -4,15 +4,15 @@
 namespace App\Tests\Service;
 
 use App\Factory\HallFactory;
-use App\Repository\HallRepository;
 use App\Service\HallService;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Zenstruck\Foundry\Test\Factories;
 
 class HallServiceTest extends WebTestCase
 {
-    protected HallFactory $factory;
-    protected HallRepository $hallRepository;
+    use Factories;
+
     protected HallService $hallService;
 
     protected function setUp(): void
@@ -20,19 +20,17 @@ class HallServiceTest extends WebTestCase
         self::bootKernel();
         $container = static::getContainer();
 
-        $this->factory = $container->get(HallFactory::class);
-        $this->hallRepository = $container->get(HallRepository::class);
         $this->hallService = $container->get(HallService::class);
     }
 
     public function testFind_ReturnsHall_IfItExists(): void
     {
-        $hall = $this->factory->create();
+        $hall = HallFactory::createOne();
         $id = $hall->getId();
 
         $foundHall = $this->hallService->find($id);
 
-        $this->assertEquals($hall, $foundHall);
+        $this->assertEquals($hall->object(), $foundHall);
     }
 
     public function testFind_ThrowsResourceNotFoundException_IfHallDoesntExist(): void
@@ -46,11 +44,12 @@ class HallServiceTest extends WebTestCase
 
     public function testFindAll_ReturnsAllHalls(): void
     {
-        $halls = [$this->factory->create(), $this->factory->create()];
+        $halls = HallFactory::createMany(2);
 
         $foundHalls = $this->hallService->findAll();
 
-        $this->assertEquals($halls, $foundHalls);
+        $this->assertEquals($halls[0]->object(), $foundHalls[0]);
+        $this->assertEquals($halls[1]->object(), $foundHalls[1]);
     }
 
     public function testCreate_CreatesHall(): void
@@ -68,7 +67,7 @@ class HallServiceTest extends WebTestCase
 
     public function testUpdate_UpdatesHall(): void
     {
-        $hall = $this->factory->create();
+        $hall = HallFactory::createOne();
         $id = $hall->getId();
         $data = [
             'name' => 'A1',
@@ -96,12 +95,12 @@ class HallServiceTest extends WebTestCase
 
     public function testDelete_DeletesHall_IfItExists(): void
     {
-        $hall = $this->factory->create();
+        $hall = HallFactory::createOne();
         $id = $hall->getId();
 
         $this->hallService->delete($id);
 
-        $this->assertCount(0, $this->hallRepository->findAll());
+        HallFactory::assert()->empty();
     }
 
     public function testDelete_ThrowsResourceNotFoundException_IfHallDoesntExist(): void

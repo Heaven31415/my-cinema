@@ -7,26 +7,17 @@ use App\Factory\MovieFactory;
 use App\Factory\ShowFactory;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Zenstruck\Foundry\Test\Factories;
 
 class ShowTest extends KernelTestCase
 {
-    protected MovieFactory $movieFactory;
-    protected ShowFactory $showFactory;
-
-    protected function setUp(): void
-    {
-        self::bootKernel();
-        $container = static::getContainer();
-
-        $this->movieFactory = $container->get(MovieFactory::class);
-        $this->showFactory = $container->get(ShowFactory::class);
-    }
+    use Factories;
 
     public function testGetEnd_ReturnsProperDateTime(): void
     {
-        $movie = $this->movieFactory->createOne(['durationInMinutes' => 60]);
+        $movie = MovieFactory::createOne(['durationInMinutes' => 60]);
 
-        $show = $this->showFactory->create(
+        $show = ShowFactory::createOne(
             ['movie' => $movie, 'startTime' => new DateTime('2020-09-28 12:00:00')]
         );
 

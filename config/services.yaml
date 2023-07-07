@@ -20,17 +20,9 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
-    App\Factory\GenreFactory:
-        public: true
-    App\Factory\HallFactory:
-        public: true
-    App\Factory\MovieFactory:
-        public: true
-    App\Factory\ShowFactory:
-        public: true
     # Always run after FosRestDescriber and PhpDocDescriber
     App\ApiDoc\RouteDescriber\DuplicatedRequestBodyNormalizer:
         tags:
             - { name: nelmio_api_doc.route_describer, priority: -280 }
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones

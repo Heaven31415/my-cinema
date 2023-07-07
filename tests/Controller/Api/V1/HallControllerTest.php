@@ -3,36 +3,28 @@
 namespace App\Tests\Controller\Api\V1;
 
 use App\Factory\HallFactory;
-use App\Repository\HallRepository;
 use FOS\RestBundle\Exception\InvalidParameterException;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Zenstruck\Foundry\Test\Factories;
 
 class HallControllerTest extends WebTestCase
 {
-    protected KernelBrowser $client;
-    protected HallFactory $factory;
-    protected HallRepository $hallRepository;
+    use Factories;
 
-    /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+    protected KernelBrowser $client;
+
     protected function setUp(): void
     {
         $this->client = static::createClient();
         $this->client->catchExceptions(false);
-
-        $container = $this->client->getContainer();
-
-        $this->factory = $container->get(HallFactory::class);
-        $this->hallRepository = $container->get(HAllRepository::class);
     }
 
     public function testIndex_ReturnsOk(): void
     {
-        for ($i = 0; $i < 3; $i++) {
-            $this->factory->create();
-        }
+        HallFactory::createMany(2);
 
         $this->client->jsonRequest('GET', '/api/v1/halls');
 
@@ -41,7 +33,7 @@ class HallControllerTest extends WebTestCase
 
     public function testShow_ReturnsOk(): void
     {
-        $hall = $this->factory->create();
+        $hall = HallFactory::createOne();
         $id = $hall->getId();
 
         $this->client->jsonRequest('GET', "api/v1/halls/$id");
@@ -68,7 +60,7 @@ class HallControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_CREATED);
-        $this->assertCount(1, $this->hallRepository->findAll());
+        HallFactory::assert()->count(1);
     }
 
     public function testCreate_ReturnsBadRequest_IfRequestBodyIsInvalid(): void
@@ -81,12 +73,12 @@ class HallControllerTest extends WebTestCase
         ]);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertCount(0, $this->hallRepository->findAll());
+        HallFactory::assert()->empty();
     }
 
     public function testUpdate_ReturnsNoContent(): void
     {
-        $hall = $this->factory->create();
+        $hall = HallFactory::createOne();
         $id = $hall->getId();
 
         $this->client->jsonRequest('PUT', "api/v1/halls/$id", [
@@ -99,7 +91,7 @@ class HallControllerTest extends WebTestCase
 
     public function testUpdate_ReturnsBadRequest_IfRequestBodyIsInvalid(): void
     {
-        $hall = $this->factory->create();
+        $hall = HallFactory::createOne();
         $id = $hall->getId();
 
         $this->expectException(InvalidParameterException::class);
@@ -128,7 +120,7 @@ class HallControllerTest extends WebTestCase
 
     public function testDelete_ReturnsNoContent(): void
     {
-        $hall = $this->factory->create();
+        $hall = HallFactory::createOne();
         $id = $hall->getId();
 
         $this->client->jsonRequest('DELETE', "api/v1/halls/$id");
