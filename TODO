@@ -8,6 +8,5 @@
 - Improve and/or fix unit and integration tests for Genre and Hall
 - Add Show data fixtures
 - Implement Show sorting by date, genre and title
-- Improve factories implementation
 - Fix a missing favicon in API docs
 - Use a cron job to add new shows everyday
