@@ -2,7 +2,11 @@
 
 ![tests](https://github.com/Heaven31415/my-cinema/actions/workflows/tests.yml/badge.svg)
 
-`My Cinema` is an REST API for managing a cinema created with PHP and Symfony
+`My Cinema` is an REST API for managing a cinema created with PHP 8, Symfony 6 and FOSRestBundle 3
+
+## JetBrains support
+
+This project is supported by JetBrains via its [OpenSourceSupport](https://jb.gg/OpenSourceSupport) initiative
 
 ## Demo
 
@@ -12,13 +16,14 @@ OpenAPI documentation can be found [here](https://heaven31415-my-cinema.herokuap
 
 ## Project overview
 
-- 4 services
-- 4 entities
-- 4 controllers
-- 16 endpoints with docs in OpenAPI format
+- CRUDs for Genres, Halls, Movies and Shows: 4 services, 4 entities and 4 controllers
+- 16 endpoints with documentation in OpenAPI format via [NelmioApiDocBundle](https://github.com/nelmio/NelmioApiDocBundle)
 - 67 unit and integration tests (166 assertions)
-- CI support via GitHub Actions
-- Live version deployed on Heroku
+- Authentication via [LexikJWTAuthenticationBundle](https://github.com/lexik/LexikJWTAuthenticationBundle) and authorization support **(WIP)**
+- Sensible data fixtures implemented with [ZenstruckFoundryBundle](https://github.com/zenstruck/foundry)
+- Live version API and documentation, deployed on Heroku
+- GitHub Actions CI support
+- Local docker development support **(WIP)**
 
 ## Local setup and development
 
