@@ -10,6 +10,7 @@ use FOS\RestBundle\Controller\Annotations\Delete;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Put;
+use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Controller\Annotations\RequestParam;
 use FOS\RestBundle\Controller\Annotations\View as ViewAnnotation;
 use FOS\RestBundle\View\View;
@@ -26,7 +27,16 @@ class ShowController extends AbstractFOSRestController
     }
 
     /**
-     * Return a list of available shows
+     * Returns a subset of shows
+     *
+     * Returns all shows if used without filters.
+     * Otherwise, it returns a subset of them based on provided
+     * filters and their values. Shows can be filtered by
+     * movie title, genre name and start time. If you use
+     * multiple filters together they will work as if you
+     * applied a logical conjunction operator (AND) on them.
+     *
+     * @throws Exception
      */
     #[OA\Tag(name: 'shows')]
     #[OA\Response(
@@ -39,9 +49,65 @@ class ShowController extends AbstractFOSRestController
     )]
     #[Get('/api/v1/shows', name: 'api_v1_index_shows')]
     #[ViewAnnotation(statusCode: Response::HTTP_OK, serializerGroups: ['basic'])]
-    public function index(): View
-    {
-        return View::create($this->showService->findAll());
+    #[OA\Parameter(
+        name: 'title',
+        in: 'query',
+        example: 'Avatar'
+    )]
+    #[QueryParam(
+        name: 'title',
+        requirements: new Assert\Type(['type' => 'string']),
+        description: 'Case-sensitive fragment of the movie title',
+        strict: true,
+        nullable: true,
+        allowBlank: false)
+    ]
+    #[OA\Parameter(
+        name: 'genre',
+        in: 'query',
+        example: 'Science Fiction'
+    )]
+    #[QueryParam(
+        name: 'genre',
+        requirements: new Assert\Type(['type' => 'string']),
+        description: 'Case-sensitive fragment of the genre name',
+        strict: true,
+        nullable: true,
+        allowBlank: false)
+    ]
+    #[OA\Parameter(
+        name: 'from',
+        in: 'query',
+        example: '2020-09-21'
+    )]
+    #[QueryParam(
+        name: 'from',
+        requirements: new Assert\Date(),
+        description: 'Date in YYYY-mm-dd format (inclusive)',
+        strict: true,
+        nullable: true,
+        allowBlank: false)
+    ]
+    #[OA\Parameter(
+        name: 'to',
+        in: 'query',
+        example: '2020-09-28'
+    )]
+    #[QueryParam(
+        name: 'to',
+        requirements: new Assert\Date(),
+        description: 'Date in YYYY-mm-dd format (exclusive)',
+        strict: true,
+        nullable: true,
+        allowBlank: false)
+    ]
+    public function index(
+        ?string $title,
+        ?string $genre,
+        ?string $from,
+        ?string $to,
+    ): View {
+        return View::create($this->showService->findAll($title, $genre, $from, $to));
     }
 
     /**

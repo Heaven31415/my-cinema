@@ -6,6 +6,7 @@ namespace App\Tests\Controller\Api\V1;
 use App\Factory\HallFactory;
 use App\Factory\MovieFactory;
 use App\Factory\ShowFactory;
+use App\Service\ShowService;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -27,10 +28,10 @@ class ShowControllerTest extends WebTestCase
         $this->client->catchExceptions(false);
     }
 
-    public function testIndex_ReturnsAllShows(): void
+    public function testIndex_ReturnsProperResponseStructure(): void
     {
-        $showA = ShowFactory::createOne();
-        $showB = ShowFactory::createOne();
+        $showA = ShowFactory::createOne(['startTime' => new DateTime('2020-09-28 12:00:00')]);
+        $showB = ShowFactory::createOne(['startTime' => new DateTime('2020-09-28 13:00:00')]);
 
         $this->client->jsonRequest('GET', 'api/v1/shows');
         $response = json_decode($this->client->getResponse()->getContent(), true);
@@ -53,6 +54,32 @@ class ShowControllerTest extends WebTestCase
             $showB->getStartTime()->format(self::DATE_TIME_FORMAT),
             $response[1]['startTime']
         );
+    }
+
+    public function testIndex_CallsFindAllWithoutArguments_IfNoFiltersAreProvided(): void
+    {
+        $showService = $this->createMock(ShowService::class);
+        $showService->expects(self::once())
+            ->method('findAll')
+            ->with(null, null, null, null);
+        $this->getContainer()->set(ShowService::class, $showService);
+
+        $this->client->jsonRequest('GET', 'api/v1/shows');
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+    }
+
+    public function testIndex_CallsFindAllWithArguments_IfFiltersAreProvided(): void
+    {
+        $showService = $this->createMock(ShowService::class);
+        $showService->expects(self::once())
+            ->method('findAll')
+            ->with('Avatar', 'Action', null, null);
+        $this->getContainer()->set(ShowService::class, $showService);
+
+        $this->client->jsonRequest('GET', 'api/v1/shows?title=Avatar&genre=Action');
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
     public function testShow_ReturnsShow(): void
