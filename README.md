@@ -18,7 +18,7 @@ OpenAPI documentation can be found [here](https://heaven31415-my-cinema.herokuap
 
 - CRUDs for Genres, Halls, Movies and Shows: 4 services, 4 entities and 4 controllers
 - 16 endpoints with documentation in OpenAPI format via [NelmioApiDocBundle](https://github.com/nelmio/NelmioApiDocBundle)
-- 67 unit and integration tests (166 assertions)
+- 75 unit and integration tests (187 assertions)
 - Authentication via [LexikJWTAuthenticationBundle](https://github.com/lexik/LexikJWTAuthenticationBundle) and authorization support **(WIP)**
 - Sensible data fixtures implemented with [ZenstruckFoundryBundle](https://github.com/zenstruck/foundry)
 - Live version API and documentation, deployed on Heroku

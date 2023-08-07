@@ -7,7 +7,6 @@
 - Sort entities (Genre and Hall) by id when returning all of them
 - Improve and/or fix unit and integration tests for Genre and Hall
 - Add Show data fixtures
-- Implement Show sorting by start time, genre name and movie title
 - Fix a missing favicon in API docs
 - Use a cron job to add new shows everyday
 - Switch from DateTime to DateTimeImmutable

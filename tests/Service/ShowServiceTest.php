@@ -3,6 +3,7 @@
 
 namespace App\Tests\Service;
 
+use App\Factory\GenreFactory;
 use App\Factory\HallFactory;
 use App\Factory\MovieFactory;
 use App\Factory\ShowFactory;
@@ -46,14 +47,115 @@ class ShowServiceTest extends WebTestCase
         $this->showService->find($id);
     }
 
-    public function testFindAll_ReturnsAllShows(): void
+    public function testFindAll_ReturnsShowsSortedByStartTimeInAscendingOrder(): void
+    {
+        ShowFactory::createSequence(function () {
+            foreach (range(3, 1) as $day) {
+                yield ['startTime' => new DateTime('2020-09-0'.$day.' 12:00:00')];
+            }
+        });
+
+        ShowFactory::createSequence(function () {
+            foreach (range(15, 12) as $hour) {
+                yield ['startTime' => new DateTime('2020-09-04 '.$hour.':00:00')];
+            }
+        });
+
+        $foundShows = $this->showService->findAll();
+
+        $this->assertEquals('2020-09-01', $foundShows[0]->getStartTime()->format('Y-m-d'));
+        $this->assertEquals('2020-09-02', $foundShows[1]->getStartTime()->format('Y-m-d'));
+        $this->assertEquals('2020-09-03', $foundShows[2]->getStartTime()->format('Y-m-d'));
+
+        $this->assertEquals('12:00:00', $foundShows[3]->getStartTime()->format('H:i:s'));
+        $this->assertEquals('13:00:00', $foundShows[4]->getStartTime()->format('H:i:s'));
+        $this->assertEquals('14:00:00', $foundShows[5]->getStartTime()->format('H:i:s'));
+    }
+
+    public function testFindAll_ReturnsAllShows_IfNoFiltersAreProvided(): void
     {
         $shows = ShowFactory::createMany(2);
 
         $foundShows = $this->showService->findAll();
 
-        $this->assertEquals($shows[0]->object(), $foundShows[0]);
-        $this->assertEquals($shows[1]->object(), $foundShows[1]);
+        $this->assertCount(2, $foundShows);
+        $this->assertContains($shows[0]->object(), $foundShows);
+        $this->assertContains($shows[1]->object(), $foundShows);
+    }
+
+    public function testFindAll_ReturnsShowsWithProperMovieTitle_IfTitleFilterIsProvided(): void
+    {
+        ShowFactory::createSequence([
+            ['movie' => MovieFactory::new(['title' => 'Avatar'])],
+            ['movie' => MovieFactory::new(['title' => 'Titanic'])],
+        ]);
+
+        $foundShows = $this->showService->findAll('Avatar');
+
+        $this->assertCount(1, $foundShows);
+        $this->assertEquals('Avatar', $foundShows[0]->getMovie()->getTitle());
+    }
+
+    public function testFindAll_ReturnsShowsWithProperMovieGenre_IfGenreFilterIsProvided(): void
+    {
+        ShowFactory::createSequence([
+            ['movie' => MovieFactory::new(['genre' => GenreFactory::find(['name' => 'Action'])])],
+            ['movie' => MovieFactory::new(['genre' => GenreFactory::find(['name' => 'Comedy'])])],
+        ]);
+
+        $foundShows = $this->showService->findAll(null, 'Action');
+
+        $this->assertCount(1, $foundShows);
+        $this->assertEquals('Action', $foundShows[0]->getMovie()->getGenre()->getName());
+    }
+
+    public function testFindAll_ReturnsShowsPlayedAfterProvidedDate_IfFromFilterIsProvided(): void
+    {
+        ShowFactory::createSequence([
+            ['startTime' => new DateTime('2020-09-27 12:00:00')],
+            ['startTime' => new DateTime('2020-09-28 12:00:00')],
+        ]);
+
+        $foundShows = $this->showService->findAll(null, null, '2020-09-28');
+
+        $this->assertCount(1, $foundShows);
+        $this->assertEquals('2020-09-28', $foundShows[0]->getStartTime()->format('Y-m-d'));
+    }
+
+    public function testFindAll_ReturnsShowsPlayedBeforeProvidedDate_IfToFilterIsProvided(): void
+    {
+        ShowFactory::createSequence([
+            ['startTime' => new DateTime('2020-09-27 12:00:00')],
+            ['startTime' => new DateTime('2020-09-28 12:00:00')],
+        ]);
+
+        $foundShows = $this->showService->findAll(null, null, null, '2020-09-28');
+
+        $this->assertCount(1, $foundShows);
+        $this->assertEquals('2020-09-27', $foundShows[0]->getStartTime()->format('Y-m-d'));
+    }
+
+    public function testFindAll_ReturnsValidShowsSubset_IfAllFiltersAreProvided(): void
+    {
+        ShowFactory::createSequence([
+            [
+                'startTime' => new DateTime('2020-09-28 12:00:00'),
+                'movie' => MovieFactory::new(
+                    ['title' => 'Avatar', 'genre' => GenreFactory::find(['name' => 'Action'])]
+                ),
+            ],
+            ['startTime' => new DateTime('2020-09-27')],
+            ['startTime' => new DateTime('2020-09-29')],
+            ['movie' => MovieFactory::new(['title' => 'Titanic'])],
+            ['movie' => MovieFactory::new(['genre' => GenreFactory::find(['name' => 'Comedy'])])],
+        ]);
+
+        $foundShows = $this->showService->findAll('Avatar', 'Action', '2020-09-28', '2020-09-29');
+
+        $this->assertCount(1, $foundShows);
+        $this->assertEquals('Avatar', $foundShows[0]->getMovie()->getTitle());
+        $this->assertEquals('Action', $foundShows[0]->getMovie()->getGenre()->getName());
+        $this->assertEquals('2020-09-28', $foundShows[0]->getStartTime()->format('Y-m-d'));
     }
 
     public function testCreate_CreatesShow_IfHallIsAvailable(): void

@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Show;
 use App\Repository\ShowRepository;
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -15,7 +16,8 @@ class ShowService
     public function __construct(
         private readonly MovieService $movieService,
         private readonly HallService $hallService,
-        private readonly ShowRepository $showRepository
+        private readonly ShowRepository $showRepository,
+        private readonly EntityManagerInterface $entityManager
     ) {
     }
 
@@ -31,11 +33,55 @@ class ShowService
     }
 
     /**
+     * @param string|null $title Case-sensitive fragment of the movie title
+     * @param string|null $genre Case-sensitive fragment of the genre name
+     * @param string|null $from  Date in YYYY-mm-dd format (inclusive)
+     * @param string|null $to    Date in YYYY-mm-dd format (exclusive)
+     *
      * @return Show[]
      */
-    public function findAll(): array
-    {
-        return $this->showRepository->findBy([], ['id' => 'ASC']);
+    public function findAll(
+        ?string $title = null,
+        ?string $genre = null,
+        ?string $from = null,
+        ?string $to = null
+    ): array {
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $qb->select('s')
+            ->from('App\Entity\Show', 's')
+            ->join('s.movie', 'm')
+            ->join('m.genre', 'g');
+
+        $and = $qb->expr()->andX();
+
+        if ($title !== null) {
+            $and->add($qb->expr()->like('m.title', ':title'));
+            $qb->setParameter('title', '%'.$title.'%');
+        }
+
+        if ($genre !== null) {
+            $and->add($qb->expr()->like('g.name', ':genre'));
+            $qb->setParameter('genre', '%'.$genre.'%');
+        }
+
+        if ($from !== null) {
+            $and->add($qb->expr()->gt('s.startTime', ':from'));
+            $qb->setParameter('from', $from);
+        }
+
+        if ($to !== null) {
+            $and->add($qb->expr()->lt('s.startTime', ':to'));
+            $qb->setParameter('to', $to);
+        }
+
+        if ($and->count() !== 0) {
+            $qb->where($and);
+        }
+
+        $qb->orderBy('s.startTime', 'ASC');
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
